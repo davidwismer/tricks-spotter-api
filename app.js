@@ -3,10 +3,12 @@ import createError from "http-errors";
 import logger from "morgan";
 import indexRouter from "./routes/index.js";
 import usersRouter from "./routes/users.js";
+import spotsRouter from "./routes/spots.js";
+import tricksRouter from "./routes/tricks.js";
 import mongoose from 'mongoose';
 
 //Connection to database
-mongoose.connect(process.env.DATABASE_URL || 'mongodb://localhost/tricks-spotter-api');
+mongoose.connect(process.env.DATABASE_URL || 'mongodb://127.0.0.1:27017/tricks-spotter-api');
 
 const app = express();
 
@@ -16,6 +18,8 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
+app.use("/spots", spotsRouter);
+app.use("/tricks", tricksRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
