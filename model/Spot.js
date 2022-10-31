@@ -18,8 +18,12 @@ let spotSchema = new Schema({
         required: [true, 'You must provide a category']
     },
     geolocation: {
-        type: String,
-        required: [true, 'You must provide a geolocation']
+        type: [Number],
+        required: true,
+        validate: {
+            validator: validateGeoJsonCoordinates,
+            message: '{VALUE} is not a valid longitude/latitude(/altitude) coordinates array'
+        }
     },
     picture: {
         type: String,
@@ -40,3 +44,16 @@ let spotSchema = new Schema({
 
 //create model and export it
 export const Spot = model('Spot', spotSchema)
+
+// Validate a GeoJSON coordinates array (longitude, latitude and optional altitude).
+function validateGeoJsonCoordinates(value) {
+    return Array.isArray(value) && value.length >= 2 && value.length <= 3 && isLongitude(value[0]) && isLatitude(value[1]);
+}
+
+function isLatitude(value) {
+    return value >= -90 && value <= 90;
+}
+
+function isLongitude(value) {
+    return value >= -180 && value <= 180;
+}
