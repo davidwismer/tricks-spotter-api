@@ -50,7 +50,7 @@ router.post("/", function (req, res, next) {
 
 //Login
 router.post("/login", function(req, res, next) {
-  User.findOne({ name: req.body.userName }).exec(function(err, user) {
+  User.findOne({ userName: req.body.userName }).exec(function(err, user) {
     if (err) {
       return next(err);
     } else if (!user) {

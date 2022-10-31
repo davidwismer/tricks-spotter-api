@@ -1,5 +1,4 @@
 import mongoose, { Schema, model } from "mongoose";
-import uniqueValidator from 'mongoose-unique-validator';
 
 //create the trick schema
 let trickSchema = new Schema({
@@ -18,11 +17,11 @@ let trickSchema = new Schema({
         type: Date,
         default: Date.now
     },
-    spotid: {
+    spotId: {
         type: String,
         required: [true, 'You must provide a name!']
     },
-    userid: {
+    userId: {
         type: String,
         required: [true, 'You must provide a name!']
     },
