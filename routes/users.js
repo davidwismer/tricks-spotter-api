@@ -1,7 +1,6 @@
 import express from "express";
-import bcrpyt from "bcrypt";
+import bcrypt from "bcrypt";
 import { User } from "../model/User.js"
-//import { User } from "../model/User";
 const router = express.Router();
 
 //////////////////////////////////////////GET
@@ -31,7 +30,7 @@ router.post("/", function (req, res, next) {
   //To hash the password
   const plainPassword = req.body.password;
   const costFactor = 10;
-  bcrpyt.hash(plainPassword, costFactor, function (err, hashedPassword) {
+  bcrypt.hash(plainPassword, costFactor, function (err, hashedPassword) {
     if (err) {
       return next(err)
     }
@@ -49,6 +48,26 @@ router.post("/", function (req, res, next) {
   })
 })
 
+//Login
+router.post("/login", function(req, res, next) {
+  User.findOne({ name: req.body.userName }).exec(function(err, user) {
+    if (err) {
+      return next(err);
+    } else if (!user) {
+      return res.sendStatus(401);
+    }
+    bcrypt.compare(req.body.password, user.password, function(err, valid) {
+      if (err) {
+        return next(err);
+      } else if (!valid) {
+        return res.sendStatus(401);
+      }
+      // Login is valid...
+      res.send(`Welcome ${user.name}!`);
+    });
+  })
+});
+
 ////////////////////////////////////////////DELETE
 //Delete user by id
 router.delete("/:id", function (req, res, next) {
@@ -59,5 +78,8 @@ router.delete("/:id", function (req, res, next) {
     res.send(removedUser)
   })
 })
+
+///////////////////////////////////////////PUT
+
 
 export default router;
