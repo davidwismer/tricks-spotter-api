@@ -18,20 +18,23 @@ let spotSchema = new Schema({
         required: [true, 'You must provide a category']
     },
     geolocation: {
-
+        type: String,
+        required: [true, 'You must provide a geolocation']
     },
     picture: {
-
+        type: String,
     },
     rating: {
-
+        type: Number,
+        required: [true, 'You must provide a rating']
     },
     creationDate: {
         type: Date,
         default: Date.now
     },
     lastModifDate: {
-
+        type: Date,
+        default: Date.now
     }
 })
 
