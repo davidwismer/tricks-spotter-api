@@ -23,10 +23,10 @@ let spotSchema = new Schema({
     },
     picture: {
         type: String,
+        required: [true, 'You must provide a picture']
     },
     rating: {
         type: Number,
-        required: [true, 'You must provide a rating']
     },
     creationDate: {
         type: Date,

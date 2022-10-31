@@ -6,7 +6,7 @@ const router = express.Router();
 //////////////////////////////////////////GET
 //get all users
 router.get("/", function (req, res, next) {
-  User.find().sort('name').exec(function (err, users) {
+  User.find().sort('userName').exec(function (err, users) {
     if (err) {
       return next(err);
     }
@@ -63,7 +63,7 @@ router.post("/login", function(req, res, next) {
         return res.sendStatus(401);
       }
       // Login is valid...
-      res.send(`Welcome ${user.name}!`);
+      res.send(`Welcome ${user.userName}!`);
     });
   })
 });

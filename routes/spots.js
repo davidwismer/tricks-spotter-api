@@ -24,4 +24,18 @@ router.get("/:id", function (req, res, next) {
   })
 });
 
+////////////////////////////////////////////POST
+//Create new spot
+router.post("/", function (req, res, next) {
+  //Get the spot created
+  const newSpot = new Spot(req.body)
+  //save new spot created
+  newSpot.save(function (err, savedSpot) {
+    if (err) {
+      return next(err)
+    }
+    res.send(savedSpot)
+  })
+})
+
 export default router;
