@@ -1,5 +1,4 @@
 import express from "express";
-import bcrypt from "bcrypt";
 import { Spot } from "../model/Spot.js";
 const router = express.Router();
 
