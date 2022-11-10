@@ -38,7 +38,15 @@ router.post("/", function (req, res, next) {
 })
 
 //////////////////////////////////////////DELETE
-
+//Delete spot by id
+router.delete("/:id", function (req, res, next) {
+  Spot.findOneAndRemove({ _id: req.params.id }).exec(function (err, removedSpot) {
+    if (err) {
+      return next(err)
+    }
+    res.send(removedSpot)
+  })
+})
 
 //////////////////////////////////////////PUT
 

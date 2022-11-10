@@ -35,6 +35,19 @@ router.post("/", function (req, res, next) {
     }
     res.send(savedTrick)
   })
+});
+
+////////////////////////////////////////////DELETE
+//Delete trick by id
+router.delete("/:id", function (req, res, next) {
+  Trick.findOneAndRemove({ _id: req.params.id }).exec(function (err, removedTrick) {
+    if (err) {
+      return next(err)
+    }
+    res.send(removedTrick)
+  })
 })
+
+///////////////////////////////////////////PUT
 
 export default router;
