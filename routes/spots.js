@@ -49,5 +49,20 @@ router.delete("/:id", function (req, res, next) {
 })
 
 //////////////////////////////////////////PUT
+router.put("/:id", function (req, res, next) {
+  Spot.findByIdAndUpdate({ _id: req.params.id}, {
+    name: req.body.name,
+    description: req.body.description,
+    category: req.body.category,
+    geolocation: req.body.geolocation,
+    picture: req.body.picture,
+    rating: req.body.rating
+  }).exec(function (err, updatedSpot) {
+    if (err) {
+      return next(err);
+    }
+    res.send(updatedSpot);
+  })
+})
 
 export default router;
