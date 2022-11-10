@@ -59,14 +59,14 @@ router.post("/", function (req, res, next) {
 })
 
 //Login
-router.post("/login", function(req, res, next) {
-  User.findOne({ userName: req.body.userName }).exec(function(err, user) {
+router.post("/login", function (req, res, next) {
+  User.findOne({ userName: req.body.userName }).exec(function (err, user) {
     if (err) {
       return next(err);
     } else if (!user) {
       return res.sendStatus(401);
     }
-    bcrypt.compare(req.body.password, user.password, function(err, valid) {
+    bcrypt.compare(req.body.password, user.password, function (err, valid) {
       if (err) {
         return next(err);
       } else if (!valid) {
@@ -91,7 +91,17 @@ router.delete("/:id", function (req, res, next) {
 
 ///////////////////////////////////////////PUT
 router.put("/:id", function (req, res, next) {
-
+  User.findByIdAndUpdate({ _id: req.params.id}, {
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    userName: req.body.userName,
+    password: req.body.password
+  }).exec(function (err, updatedUser) {
+    if (err) {
+      return next(err);
+    }
+    res.send(updatedUser);
+  })
 })
 
 export default router;

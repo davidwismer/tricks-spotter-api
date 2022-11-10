@@ -18,11 +18,11 @@ let trickSchema = new Schema({
         default: Date.now
     },
     spotId: {
-        type: String,
+        type: mongoose.ObjectId,
         required: [true, 'You must provide a spotId!']
     },
     userId: {
-        type: String,
+        type: mongoose.ObjectId,
         required: [true, 'You must provide a userId!']
     },
 })
