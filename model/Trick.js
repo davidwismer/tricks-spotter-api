@@ -9,21 +9,21 @@ let trickSchema = new Schema({
         type: String,
         required: [true, 'You must provide a name!']
     },
-    creationDate: {
-        type: Date,
-        default: Date.now
+    video: {
+        type: String,
+        required: [true, 'You must provide a video!']
     },
-    LastModificationDate: {
+    creationDate: {
         type: Date,
         default: Date.now
     },
     spotId: {
         type: String,
-        required: [true, 'You must provide a name!']
+        required: [true, 'You must provide a spotId!']
     },
     userId: {
         type: String,
-        required: [true, 'You must provide a name!']
+        required: [true, 'You must provide a userId!']
     },
 })
 
