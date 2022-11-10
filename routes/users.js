@@ -1,6 +1,7 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import { User } from "../model/User.js"
+import { Trick } from "../model/Trick.js";
 const router = express.Router();
 
 //////////////////////////////////////////GET
@@ -30,7 +31,9 @@ router.get("/:id/tricks", function (req, res, next) {
     if (err) {
       return next(err)
     }
-    res.send(user)
+    Trick.find({ userId: req.params.id }).exec(function (err, tricks) {
+      res.send(tricks)
+    })
   })
 });
 
@@ -91,7 +94,7 @@ router.delete("/:id", function (req, res, next) {
 
 ///////////////////////////////////////////PUT
 router.put("/:id", function (req, res, next) {
-  User.findByIdAndUpdate({ _id: req.params.id}, {
+  User.findByIdAndUpdate({ _id: req.params.id }, {
     firstName: req.body.firstName,
     lastName: req.body.lastName,
     userName: req.body.userName,

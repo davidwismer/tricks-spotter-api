@@ -1,5 +1,6 @@
 import express from "express";
 import { Spot } from "../model/Spot.js";
+import { Trick } from "../model/Trick.js"
 const router = express.Router();
 
 //////////////////////////////////////////GET
@@ -20,6 +21,18 @@ router.get("/:id", function (req, res, next) {
       return next(err)
     }
     res.send(spot)
+  })
+});
+
+//Get all the tricks of a user
+router.get("/:id/tricks", function (req, res, next) {
+  Spot.findOne({ _id: req.params.id }).exec(function (err, user) {
+    if (err) {
+      return next(err)
+    }
+    Trick.find({ spotId: req.params.id }).exec(function (err, tricks) {
+      res.send(tricks)
+    })
   })
 });
 
