@@ -61,30 +61,10 @@ router.post("/", function (req, res, next) {
   })
 })
 
-//Login
-router.post("/login", function (req, res, next) {
-  User.findOne({ userName: req.body.userName }).exec(function (err, user) {
-    if (err) {
-      return next(err);
-    } else if (!user) {
-      return res.sendStatus(401);
-    }
-    bcrypt.compare(req.body.password, user.password, function (err, valid) {
-      if (err) {
-        return next(err);
-      } else if (!valid) {
-        return res.sendStatus(401);
-      }
-      // Login is valid...
-      res.send(`Welcome ${user.userName}!`);
-    });
-  })
-});
-
 ////////////////////////////////////////////DELETE
 //Delete user by id
 router.delete("/:id", function (req, res, next) {
-  User.findOneAndRemove({ _id: req.params.id }).exec(function (err, removedUser) {
+  User.findByIdAndRemove({ _id: req.params.id }).exec(function (err, removedUser) {
     if (err) {
       return next(err)
     }

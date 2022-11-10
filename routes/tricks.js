@@ -1,5 +1,6 @@
 import express from "express";
 import { Trick } from "../model/Trick.js";
+import authenticate from "../utils/auth.js";
 const router = express.Router();
 
 //////////////////////////////////////////GET
@@ -40,7 +41,7 @@ router.post("/", function (req, res, next) {
 ////////////////////////////////////////////DELETE
 //Delete trick by id
 router.delete("/:id", function (req, res, next) {
-  Trick.findOneAndRemove({ _id: req.params.id }).exec(function (err, removedTrick) {
+  Trick.findByIdAndRemove({ _id: req.params.id }).exec(function (err, removedTrick) {
     if (err) {
       return next(err)
     }
@@ -49,7 +50,7 @@ router.delete("/:id", function (req, res, next) {
 })
 
 ///////////////////////////////////////////PUT
-router.put("/:id", function (req, res, next) {
+router.put("/:id", authenticate, function (req, res, next) {
   Trick.findByIdAndUpdate({ _id: req.params.id}, {
     name: req.body.name,
     video: req.body.video

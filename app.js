@@ -5,6 +5,7 @@ import indexRouter from "./routes/index.js";
 import usersRouter from "./routes/users.js";
 import spotsRouter from "./routes/spots.js";
 import tricksRouter from "./routes/tricks.js";
+import loginRouter from "./routes/login.js"
 import mongoose from 'mongoose';
 
 //Connection to database
@@ -20,6 +21,7 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/spots", spotsRouter);
 app.use("/tricks", tricksRouter);
+app.use("/login", loginRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
