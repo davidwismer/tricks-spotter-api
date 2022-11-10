@@ -49,5 +49,16 @@ router.delete("/:id", function (req, res, next) {
 })
 
 ///////////////////////////////////////////PUT
+router.put("/:id", function (req, res, next) {
+  Trick.findByIdAndUpdate({ _id: req.params.id}, {
+    name: req.body.name,
+    video: req.body.video
+  }).exec(function (err, updatedTrick) {
+    if (err) {
+      return next(err);
+    }
+    res.send(updatedTrick);
+  })
+})
 
 export default router;
