@@ -24,6 +24,16 @@ router.get("/:id", function (req, res, next) {
   })
 });
 
+//Get all the tricks of a user
+router.get("/:id/tricks", function (req, res, next) {
+  User.findOne({ _id: req.params.id }).exec(function (err, user) {
+    if (err) {
+      return next(err)
+    }
+    res.send(user)
+  })
+});
+
 ///////////////////////////////////////////POST
 //Create new user
 router.post("/", function (req, res, next) {
@@ -80,6 +90,8 @@ router.delete("/:id", function (req, res, next) {
 })
 
 ///////////////////////////////////////////PUT
+router.put("/:id", function (req, res, next) {
 
+})
 
 export default router;
