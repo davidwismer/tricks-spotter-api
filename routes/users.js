@@ -7,6 +7,13 @@ const router = express.Router();
 
 //////////////////////////////////////////GET
 //get all users
+/**
+ * @api {get} /users Request a list of the users
+ * @apiName GetUsers
+ * @apiGroup User
+ *
+ * @apiSuccess {Object[]} users List of users
+ */
 router.get("/", function (req, res, next) {
   User.find().count(function (err, total) { //To paginate the users
     if (err) {
