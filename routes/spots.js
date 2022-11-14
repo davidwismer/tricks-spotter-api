@@ -7,35 +7,35 @@ const router = express.Router();
 //////////////////////////////////////////GET
 //get all spots
 router.get("/", function (req, res, next) {
-  Spot.find().count(function (err, total) { //To paginate the spots
+  //To filter the spots by category
+  let query = Spot.find()
+  if (req.query.category) {
+    query = query.where('category').equals(req.query.category);
+  }
+
+  //To paginate the spots
+  const maxPage = 10 //Max elements per page
+  let page = parseInt(req.query.page, maxPage);
+  if (isNaN(page) || page < 1) {
+    page = 1
+  }
+
+  let pageSize = parseInt(req.query.pageSize, maxPage);
+  if (isNaN(pageSize) || pageSize < 0 || pageSize > maxPage) {
+    pageSize = maxPage;
+  }
+
+  query = query.skip((page - 1) * pageSize).limit(pageSize)
+
+  query.exec(function (err, spots) {
     if (err) {
       return next(err);
     }
-    let query = Spot.find()
-    const maxPage = 10
-
-    let page = parseInt(req.query.page, maxPage);
-    if (isNaN(page) || page < 1) {
-      page = 1
-    }
-
-    let pageSize = parseInt(req.query.pageSize, maxPage);
-    if (isNaN(pageSize) || pageSize < 0 || pageSize > maxPage) {
-      pageSize = maxPage;
-    }
-
-    query = query.skip((page - 1) * pageSize).limit(pageSize)
-
-    query.exec(function (err, spots) {
-      if (err) {
-        return next(err);
-      }
-      res.send({
-        data: spots,
-        page: page,
-        pageSize: pageSize,
-        total: total
-      })
+    res.send({
+      data: spots,
+      page: page,
+      pageSize: pageSize,
+      total: spots.length
     })
   })
 })
