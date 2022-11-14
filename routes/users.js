@@ -63,7 +63,7 @@ router.post("/", function (req, res, next) {
 
 ////////////////////////////////////////////DELETE
 //Delete user by id
-router.delete("/:id", function (req, res, next) {
+router.delete("/:id", authenticate, function (req, res, next) {
   User.findByIdAndRemove({ _id: req.params.id }).exec(function (err, removedUser) {
     if (err) {
       return next(err)
@@ -73,7 +73,7 @@ router.delete("/:id", function (req, res, next) {
 })
 
 ///////////////////////////////////////////PUT
-router.put("/:id", function (req, res, next) {
+router.put("/:id", authenticate, function (req, res, next) {
   User.findByIdAndUpdate({ _id: req.params.id }, {
     firstName: req.body.firstName,
     lastName: req.body.lastName,

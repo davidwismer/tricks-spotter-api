@@ -26,7 +26,7 @@ router.get("/:id", function (req, res, next) {
 
 ////////////////////////////////////////////POST
 //Create new trick
-router.post("/", function (req, res, next) {
+router.post("/", authenticate, function (req, res, next) {
   //Get the trick created
   const newTrick = new Trick(req.body)
   //save new trick created
@@ -40,7 +40,7 @@ router.post("/", function (req, res, next) {
 
 ////////////////////////////////////////////DELETE
 //Delete trick by id
-router.delete("/:id", function (req, res, next) {
+router.delete("/:id", authenticate, function (req, res, next) {
   Trick.findByIdAndRemove({ _id: req.params.id }).exec(function (err, removedTrick) {
     if (err) {
       return next(err)

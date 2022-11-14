@@ -38,7 +38,7 @@ router.get("/:id/tricks", function (req, res, next) {
 
 ////////////////////////////////////////////POST
 //Create new spot
-router.post("/", function (req, res, next) {
+router.post("/", authenticate, function (req, res, next) {
   //Get the spot created
   const newSpot = new Spot(req.body)
   //save new spot created
@@ -52,7 +52,7 @@ router.post("/", function (req, res, next) {
 
 //////////////////////////////////////////DELETE
 //Delete spot by id
-router.delete("/:id", function (req, res, next) {
+router.delete("/:id", authenticate, function (req, res, next) {
   Spot.findByIdAndRemove({ _id: req.params.id }).exec(function (err, removedSpot) {
     if (err) {
       return next(err)
@@ -62,7 +62,7 @@ router.delete("/:id", function (req, res, next) {
 })
 
 //////////////////////////////////////////PUT
-router.put("/:id", function (req, res, next) {
+router.put("/:id", authenticate, function (req, res, next) {
   Spot.findByIdAndUpdate({ _id: req.params.id}, {
     name: req.body.name,
     description: req.body.description,
