@@ -118,26 +118,46 @@ router.post("/", function (req, res, next) {
 ////////////////////////////////////////////DELETE
 //Delete user by id
 router.delete("/:id", authenticate, function (req, res, next) {
-  User.findByIdAndRemove({ _id: req.params.id }).exec(function (err, removedUser) {
+  User.findOne({ _id: req.params.id }).exec(function (err, user) {
     if (err) {
       return next(err)
     }
-    res.send(removedUser)
+    //If the correct user is logged in we delete it
+    if (req.params.id == req.currentUserId) {
+      User.findByIdAndDelete({ _id: req.params.id }).exec(function (err, removedUser) {
+        if (err) {
+          return next(err)
+        }
+        res.send(removedUser)
+      })
+    } else {
+      res.send("Don't have the rights to do that")
+    }
   })
 })
 
 ///////////////////////////////////////////PUT
 router.put("/:id", authenticate, function (req, res, next) {
-  User.findByIdAndUpdate({ _id: req.params.id }, {
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    userName: req.body.userName,
-    password: req.body.password
-  }, {new: true, runValidators: true}).exec(function (err, updatedUser) {
+  User.findOne({ _id: req.params.id }).exec(function (err, user) {
     if (err) {
-      return next(err);
+      return next(err)
     }
-    res.send(updatedUser);
+    //If the correct user is logged in we update it
+    if (req.params.id == req.currentUserId) {
+      User.findByIdAndUpdate({ _id: req.params.id }, {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        userName: req.body.userName,
+        password: req.body.password
+      }, { new: true, runValidators: true }).exec(function (err, updatedUser) {
+        if (err) {
+          return next(err);
+        }
+        res.send(updatedUser);
+      })
+    } else {
+      res.send("Don't have the rights to do that")
+    }
   })
 })
 

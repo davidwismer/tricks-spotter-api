@@ -82,7 +82,6 @@ router.delete("/:id", authenticate, function (req, res, next) {
       res.send("Don't have the rights to do that")
     }
   })
-
 })
 
 ///////////////////////////////////////////PUT
@@ -91,7 +90,7 @@ router.put("/:id", authenticate, function (req, res, next) {
     if (err) {
       return next(err)
     }
-    //If the correct user is logged in we delete the trick
+    //If the correct user is logged in we update the trick
     if (trick.userId == req.currentUserId) {
       Trick.findByIdAndUpdate({ _id: req.params.id }, {
         name: req.body.name,
