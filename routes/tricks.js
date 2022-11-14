@@ -66,24 +66,45 @@ router.post("/", authenticate, function (req, res, next) {
 ////////////////////////////////////////////DELETE
 //Delete trick by id
 router.delete("/:id", authenticate, function (req, res, next) {
-  Trick.findByIdAndRemove({ _id: req.params.id }).exec(function (err, removedTrick) {
+  Trick.findOne({ _id: req.params.id }).exec(function (err, trick) {
     if (err) {
       return next(err)
     }
-    res.send(removedTrick)
+    //If the correct user is logged in we delete the trick
+    if (trick.userId == req.currentUserId) {
+      Trick.findByIdAndDelete({ _id: req.params.id }).exec(function (err, removedTrick) {
+        if (err) {
+          return next(err)
+        }
+        res.send(removedTrick)
+      })
+    } else {
+      res.send("Don't have the rights to do that")
+    }
   })
+
 })
 
 ///////////////////////////////////////////PUT
 router.put("/:id", authenticate, function (req, res, next) {
-  Trick.findByIdAndUpdate({ _id: req.params.id}, {
-    name: req.body.name,
-    video: req.body.video
-  }, {new: true, runValidators: true}).exec(function (err, updatedTrick) {
+  Trick.findOne({ _id: req.params.id }).exec(function (err, trick) {
     if (err) {
-      return next(err);
+      return next(err)
     }
-    res.send(updatedTrick);
+    //If the correct user is logged in we delete the trick
+    if (trick.userId == req.currentUserId) {
+      Trick.findByIdAndUpdate({ _id: req.params.id }, {
+        name: req.body.name,
+        video: req.body.video
+      }, { new: true, runValidators: true }).exec(function (err, updatedTrick) {
+        if (err) {
+          return next(err)
+        }
+        res.send(updatedTrick)
+      })
+    } else {
+      res.send("Don't have the rights to do that")
+    }
   })
 })
 
