@@ -37,8 +37,8 @@ router.get("/", function (req, res, next) {
         total: total
       })
     })
-  });
-});
+  })
+})
 
 //Get spot by id
 router.get("/:id", function (req, res, next) {
@@ -117,14 +117,14 @@ router.delete("/:id", authenticate, function (req, res, next) {
 
 //////////////////////////////////////////PUT
 router.put("/:id", authenticate, function (req, res, next) {
-  Spot.findByIdAndUpdate({ _id: req.params.id}, {
+  Spot.findByIdAndUpdate({ _id: req.params.id }, {
     name: req.body.name,
     description: req.body.description,
     category: req.body.category,
     geolocation: req.body.geolocation,
     picture: req.body.picture,
     rating: req.body.rating
-  }, {new: true, runValidators: true}).exec(function (err, updatedSpot) {
+  }, { new: true, runValidators: true }).exec(function (err, updatedSpot) {
     if (err) {
       return next(err);
     }
