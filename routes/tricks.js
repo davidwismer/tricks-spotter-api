@@ -6,11 +6,36 @@ const router = express.Router();
 //////////////////////////////////////////GET
 //get all tricks
 router.get("/", function (req, res, next) {
-  Trick.find().sort('name').exec(function (err, tricks) {
+  Trick.find().count(function (err, total) { //To paginate the tricks
     if (err) {
       return next(err);
     }
-    res.send(tricks);
+    let query = Trick.find()
+    const maxPage = 10
+
+    let page = parseInt(req.query.page, maxPage);
+    if (isNaN(page) || page < 1) {
+      page = 1
+    }
+
+    let pageSize = parseInt(req.query.pageSize, maxPage);
+    if (isNaN(pageSize) || pageSize < 0 || pageSize > maxPage) {
+      pageSize = maxPage;
+    }
+
+    query = query.skip((page - 1) * pageSize).limit(pageSize)
+
+    query.exec(function (err, tricks) {
+      if (err) {
+        return next(err);
+      }
+      res.send({
+        data: tricks,
+        page: page,
+        pageSize: pageSize,
+        total: total
+      })
+    })
   });
 });
 
@@ -54,7 +79,7 @@ router.put("/:id", authenticate, function (req, res, next) {
   Trick.findByIdAndUpdate({ _id: req.params.id}, {
     name: req.body.name,
     video: req.body.video
-  }).exec(function (err, updatedTrick) {
+  }, {new: true, runValidators: true}).exec(function (err, updatedTrick) {
     if (err) {
       return next(err);
     }

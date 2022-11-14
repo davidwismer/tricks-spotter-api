@@ -2,16 +2,42 @@ import express from "express";
 import bcrypt from "bcrypt";
 import { User } from "../model/User.js"
 import { Trick } from "../model/Trick.js";
+import authenticate from "../utils/auth.js";
 const router = express.Router();
 
 //////////////////////////////////////////GET
 //get all users
 router.get("/", function (req, res, next) {
-  User.find().sort('userName').exec(function (err, users) {
+  User.find().count(function (err, total) { //To paginate the users
     if (err) {
       return next(err);
     }
-    res.send(users);
+    let query = User.find()
+    const maxPage = 10
+
+    let page = parseInt(req.query.page, maxPage);
+    if (isNaN(page) || page < 1) {
+      page = 1
+    }
+
+    let pageSize = parseInt(req.query.pageSize, maxPage);
+    if (isNaN(pageSize) || pageSize < 0 || pageSize > maxPage) {
+      pageSize = maxPage;
+    }
+
+    query = query.skip((page - 1) * pageSize).limit(pageSize)
+
+    query.exec(function (err, users) {
+      if (err) {
+        return next(err);
+      }
+      res.send({
+        data: users,
+        page: page,
+        pageSize: pageSize,
+        total: total
+      })
+    })
   });
 });
 
@@ -31,11 +57,39 @@ router.get("/:id/tricks", function (req, res, next) {
     if (err) {
       return next(err)
     }
-    Trick.find({ userId: req.params.id }).exec(function (err, tricks) {
-      res.send(tricks)
+    Trick.find({ userId: req.params.id }).count(function (err, total) { //To Paginate the tricks
+      if (err) {
+        return next(err);
+      }
+      let query = Trick.find({ userId: req.params.id })
+      const maxPage = 10
+
+      let page = parseInt(req.query.page, maxPage);
+      if (isNaN(page) || page < 1) {
+        page = 1
+      }
+
+      let pageSize = parseInt(req.query.pageSize, maxPage);
+      if (isNaN(pageSize) || pageSize < 0 || pageSize > maxPage) {
+        pageSize = maxPage;
+      }
+
+      query = query.skip((page - 1) * pageSize).limit(pageSize)
+
+      query.exec(function (err, tricks) {
+        if (err) {
+          return next(err);
+        }
+        res.send({
+          data: tricks,
+          page: page,
+          pageSize: pageSize,
+          total: total
+        })
+      })
     })
   })
-});
+})
 
 ///////////////////////////////////////////POST
 //Create new user
@@ -79,7 +133,7 @@ router.put("/:id", authenticate, function (req, res, next) {
     lastName: req.body.lastName,
     userName: req.body.userName,
     password: req.body.password
-  }).exec(function (err, updatedUser) {
+  }, {new: true, runValidators: true}).exec(function (err, updatedUser) {
     if (err) {
       return next(err);
     }
