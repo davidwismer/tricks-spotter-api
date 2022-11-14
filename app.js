@@ -7,6 +7,7 @@ import spotsRouter from "./routes/spots.js";
 import tricksRouter from "./routes/tricks.js";
 import loginRouter from "./routes/login.js"
 import mongoose from 'mongoose';
+import path from 'path'
 
 //Connection to database
 mongoose.connect(process.env.DATABASE_URL || 'mongodb://127.0.0.1:27017/tricks-spotter-api');
@@ -24,6 +25,7 @@ app.use("/tricks", tricksRouter);
 app.use("/login", loginRouter)
 
 // Serve the apiDoc documentation.
+const __dirname = path.resolve();
 app.use('/apidoc', express.static(path.join(__dirname, 'docs')));
 
 // catch 404 and forward to error handler
