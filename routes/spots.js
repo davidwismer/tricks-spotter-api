@@ -1,6 +1,7 @@
 import express from "express";
 import { Spot } from "../model/Spot.js";
 import { Trick } from "../model/Trick.js"
+import { User } from "../model/User.js";
 import authenticate from "../utils/auth.js";
 const router = express.Router();
 
@@ -8,7 +9,7 @@ const router = express.Router();
 //get all spots
 router.get("/", function (req, res, next) {
   //To filter the spots by category
-  let query = Spot.find()
+  let query = Spot.find().sort({creationDate: -1})
   if (req.query.category) {
     query = query.where('category').equals(req.query.category);
   }
@@ -60,15 +61,15 @@ router.get("/:id/tricks", function (req, res, next) {
       if (err) {
         return next(err);
       }
-      let query = Trick.find({ spotId: req.params.id })
+      let query = Trick.find({ spotId: req.params.id }).sort({creationDate: -1})
       const maxPage = 10
 
-      let page = parseInt(req.query.page, maxPage);
+      let page = parseInt(req.query.page, 10);
       if (isNaN(page) || page < 1) {
         page = 1
       }
 
-      let pageSize = parseInt(req.query.pageSize, maxPage);
+      let pageSize = parseInt(req.query.pageSize, 10);
       if (isNaN(pageSize) || pageSize < 0 || pageSize > maxPage) {
         pageSize = maxPage;
       }
@@ -93,43 +94,73 @@ router.get("/:id/tricks", function (req, res, next) {
 ////////////////////////////////////////////POST
 //Create new spot
 router.post("/", authenticate, function (req, res, next) {
-  //Get the spot created
-  const newSpot = new Spot(req.body)
-  //save new spot created
-  newSpot.save(function (err, savedSpot) {
+  User.findOne({ _id: req.currentUserId }).exec(function (err, user) {
     if (err) {
       return next(err)
     }
-    res.send(savedSpot)
+    if (user.admin) {
+      //Get the spot created
+      const newSpot = new Spot(req.body)
+      //save new spot created
+      newSpot.save(function (err, savedSpot) {
+        if (err) {
+          return next(err)
+        }
+        res.send(savedSpot)
+      })
+    } else {
+      res.send("You don't have the rights to do that")
+    }
   })
 })
+
 
 //////////////////////////////////////////DELETE
 //Delete spot by id
 router.delete("/:id", authenticate, function (req, res, next) {
-  Spot.findByIdAndRemove({ _id: req.params.id }).exec(function (err, removedSpot) {
+  User.findOne({ _id: req.currentUserId }).exec(function (err, user) {
     if (err) {
       return next(err)
     }
-    res.send(removedSpot)
+    if (user.admin) {
+      Spot.findByIdAndRemove({ _id: req.params.id }).exec(function (err, removedSpot) {
+        if (err) {
+          return next(err)
+        }
+        res.send(removedSpot)
+      })
+    } else {
+      res.send("You don't have the rights to do that")
+    }
   })
+
 })
 
 //////////////////////////////////////////PUT
 router.put("/:id", authenticate, function (req, res, next) {
-  Spot.findByIdAndUpdate({ _id: req.params.id }, {
-    name: req.body.name,
-    description: req.body.description,
-    category: req.body.category,
-    geolocation: req.body.geolocation,
-    picture: req.body.picture,
-    rating: req.body.rating
-  }, { new: true, runValidators: true }).exec(function (err, updatedSpot) {
+  User.findOne({ _id: req.currentUserId }).exec(function (err, user) {
     if (err) {
-      return next(err);
+      return next(err)
     }
-    res.send(updatedSpot);
+    if (user.admin) {
+      Spot.findByIdAndUpdate({ _id: req.params.id }, {
+        name: req.body.name,
+        description: req.body.description,
+        category: req.body.category,
+        geolocation: req.body.geolocation,
+        picture: req.body.picture,
+        rating: req.body.rating
+      }, { new: true, runValidators: true }).exec(function (err, updatedSpot) {
+        if (err) {
+          return next(err);
+        }
+        res.send(updatedSpot);
+      })
+    }else{
+      res.send("You don't have the rights to do that")
+    }
   })
+
 })
 
 export default router;

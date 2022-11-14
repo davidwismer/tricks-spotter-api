@@ -13,21 +13,21 @@ const router = express.Router();
  * @apiGroup User
  *
  * @apiSuccess {Object[]} users List of users
- */
+ */
 router.get("/", function (req, res, next) {
   User.find().count(function (err, total) { //To paginate the users
     if (err) {
       return next(err);
     }
-    let query = User.find()
+    let query = User.find().sort({creationDate: -1})
     const maxPage = 10
 
-    let page = parseInt(req.query.page, maxPage);
+    let page = parseInt(req.query.page, 10);
     if (isNaN(page) || page < 1) {
       page = 1
     }
 
-    let pageSize = parseInt(req.query.pageSize, maxPage);
+    let pageSize = parseInt(req.query.pageSize, 10);
     if (isNaN(pageSize) || pageSize < 0 || pageSize > maxPage) {
       pageSize = maxPage;
     }
@@ -68,15 +68,15 @@ router.get("/:id/tricks", function (req, res, next) {
       if (err) {
         return next(err);
       }
-      let query = Trick.find({ userId: req.params.id })
+      let query = Trick.find({ userId: req.params.id }).sort({creationDate: -1})
       const maxPage = 10
 
-      let page = parseInt(req.query.page, maxPage);
+      let page = parseInt(req.query.page, 10);
       if (isNaN(page) || page < 1) {
         page = 1
       }
 
-      let pageSize = parseInt(req.query.pageSize, maxPage);
+      let pageSize = parseInt(req.query.pageSize, 10);
       if (isNaN(pageSize) || pageSize < 0 || pageSize > maxPage) {
         pageSize = maxPage;
       }
@@ -152,6 +152,7 @@ router.put("/:id", authenticate, function (req, res, next) {
     //If the correct user is logged in we update it
     if (req.params.id == req.currentUserId) {
       User.findByIdAndUpdate({ _id: req.params.id }, {
+        admin: req.body.admin,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         userName: req.body.userName,
@@ -165,6 +166,18 @@ router.put("/:id", authenticate, function (req, res, next) {
     } else {
       res.send("Don't have the rights to do that")
     }
+  })
+})
+
+
+//Delete all for tests ON DOIT EFFACER CA AVANT DE RENDRE
+router.delete("/", function (req, res, next) {
+  console.log("wtf")
+  User.deleteMany().exec(function (err, users) {
+    if (err) {
+      return next(err)
+    }
+    res.send("all deleted")
   })
 })
 

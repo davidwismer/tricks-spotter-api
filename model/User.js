@@ -6,6 +6,10 @@ let userSchema = new Schema({
     id: {
         type: mongoose.ObjectId
     },
+    admin: {
+        type: Boolean,
+        default: false
+    },
     firstName: {
         type: String,
         required: [true, 'You must provide a name!']

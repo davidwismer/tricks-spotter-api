@@ -10,15 +10,15 @@ router.get("/", function (req, res, next) {
     if (err) {
       return next(err);
     }
-    let query = Trick.find()
+    let query = Trick.find().sort({creationDate: -1})
     const maxPage = 10
 
-    let page = parseInt(req.query.page, maxPage);
+    let page = parseInt(req.query.page, 10);
     if (isNaN(page) || page < 1) {
       page = 1
     }
 
-    let pageSize = parseInt(req.query.pageSize, maxPage);
+    let pageSize = parseInt(req.query.pageSize, 10);
     if (isNaN(pageSize) || pageSize < 0 || pageSize > maxPage) {
       pageSize = maxPage;
     }
