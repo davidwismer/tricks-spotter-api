@@ -6,6 +6,12 @@ const router = express.Router();
 const secretKey = process.env.SECRET_KEY
 
 //Login
+/**
+ * @api {post} /login to login
+ * @apiName Login
+ * @apiGroup Login
+ * 
+ */
 router.post("/", function (req, res, next) {
     User.findOne({ userName: req.body.userName }).exec(function (err, user) {
         if (err) {

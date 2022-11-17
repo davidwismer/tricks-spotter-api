@@ -10,7 +10,7 @@ const router = express.Router();
  * @apiName GetTricks
  * @apiGroup Trick
  * 
- * @apiSuccess {Object[]} tricks List of tricks
+ * @apiSuccess {Object[]} tricks List of all tricks
  */
 router.get("/", function (req, res, next) {
   Trick.find().count(function (err, total) { //To paginate the tricks
@@ -48,13 +48,13 @@ router.get("/", function (req, res, next) {
 
 //Get trick by id
 /**
- * @api {get} /tricks/:id Request a trick's information
+ * @api {get} /tricks/:id Request a trick's information by id
  * @apiName GetTrick
  * @apiGroup Trick
  * 
- * @apiParam {string} id Unique identifier of the trick
+ * @apiParam {string} TrickId id Unique identifier of the trick
  * 
- * @apiSuccess {Object[]} the trick with the given id
+ * @apiSuccess {Object[]} TrickById the trick with the given id
  */
 router.get("/:id", function (req, res, next) {
   Trick.findOne({ _id: req.params.id }).exec(function (err, trick) {
@@ -76,7 +76,7 @@ router.get("/:id", function (req, res, next) {
  * @apiParam {String} spotid Id of the spot where the trick is done
  * @apiParam {String} userid Id of the user who did the trick
  * 
- * @apiSuccess {Object[]} created with the trick's informations
+ * @apiSuccess {Object[]} NewTrick created with the trick's informations
  */
 router.post("/", authenticate, function (req, res, next) {
   //Sets the userId to the id of the connected user
@@ -99,9 +99,9 @@ router.post("/", authenticate, function (req, res, next) {
  * @apiName DeleteTrick
  * @apiGroup Trick
  * 
- * @apiParam {String} id Unique identifier of the trick
+ * @apiParam {String} TrickId id Unique identifier of the trick
  * 
- * @apiSuccess {Object[]} all the tricks without the deleted one
+ * @apiSuccess {Object[]} DeletedTrick the deleted trick 
  */
 router.delete("/:id", authenticate, function (req, res, next) {
   Trick.findOne({ _id: req.params.id }).exec(function (err, trick) {
@@ -131,7 +131,7 @@ router.delete("/:id", authenticate, function (req, res, next) {
  * 
  * @apiParam {String} id Unique identifier of the trick
  * 
- * @apiSuccess {Object[]} the trick updated
+ * @apiSuccess {Object[]} UpdatedTrick the trick updated
  */
 router.put("/:id", authenticate, function (req, res, next) {
   Trick.findOne({ _id: req.params.id }).exec(function (err, trick) {
