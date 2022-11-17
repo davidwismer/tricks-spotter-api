@@ -155,4 +155,14 @@ router.put("/:id", authenticate, function (req, res, next) {
   })
 })
 
+//Delete all for tests ON DOIT EFFACER CA AVANT DE RENDRE
+router.delete("/", function (req, res, next) {
+  Trick.deleteMany().exec(function (err, tricks) {
+    if (err) {
+      return next(err)
+    }
+    res.send("all deleted")
+  })
+})
+
 export default router;

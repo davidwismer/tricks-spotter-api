@@ -1,7 +1,7 @@
 {
-    "name": "My project",
+    "name": "tricks-spotter-api",
     "version": "1.0.0",
-    "description": "It is awesome",
-    "title": "My project",
-    "url" : "https://example.com"
+    "description": "Documentation of the tricks-spotter-api. Informations on the different routes.",
+    "title": "tricks-spotter-api",
+    "url" : "https://tricks-spotter-api.onrender.com"
   }

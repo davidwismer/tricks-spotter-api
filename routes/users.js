@@ -19,7 +19,6 @@ router.get("/", function (req, res, next) {
     if (err) {
       return next(err);
     }
-    let query = User.find().sort({ creationDate: -1 })
     const maxPage = 10
 
     let page = parseInt(req.query.page, 10);
@@ -32,18 +31,64 @@ router.get("/", function (req, res, next) {
       pageSize = maxPage;
     }
 
-    query = query.skip((page - 1) * pageSize).limit(pageSize)
-
-    query.exec(function (err, users) {
+    //Aggregation, get number of tricks posted by users
+    User.aggregate([
+      {
+        $lookup: {
+          from: 'tricks',
+          localField: '_id',
+          foreignField: 'userId',
+          as: 'tricksPosted'
+        }
+      },
+      {
+        $unwind: {
+          path: '$tricksPosted',
+          preserveNullAndEmptyArrays: true //To keep also the users who didn't post any tricks
+        }
+      },
+      {
+        $addFields: {
+          tricksPosted: {
+            $cond: {
+              if: '$tricksPosted',
+              then: 1,
+              else: 0
+            }
+          }
+        }
+      },
+      {
+        $group: {
+          _id: '$_id',
+          admin: { $first: '$admin' },
+          firstName: { $first: '$firstName' },
+          lastName: { $first: '$lastName' },
+          userName: { $first: '$userName' },
+          creationDate: { $first: '$creationDate' },
+          tricksPosted: { $sum: '$tricksPosted' }
+        }
+      },
+      {
+        $sort: {
+          creationDate: -1
+        }
+      },
+      {
+        $skip: (page - 1) * pageSize
+      },
+      {
+        $limit: pageSize
+      }
+    ], function (err, users) {
       if (err) {
         return next(err);
       }
-      res.send({
-        data: users,
-        page: page,
-        pageSize: pageSize,
-        total: total
-      })
+      res.send(users.map(user => {
+        const serialized = new User(user).toJSON() //Transform user to Mongoose model
+        serialized.tricksPosted = user.tricksPosted //Add the aggregated property
+        return serialized
+      }))
     })
   });
 });
@@ -57,7 +102,7 @@ router.get("/", function (req, res, next) {
  * @apiParam {String} id Unique identifier of the user
  * 
  * @apiSuccess {Object[]} the user with the given id
- */
+ */
 router.get("/:id", function (req, res, next) {
   User.findOne({ _id: req.params.id }).exec(function (err, user) {
     if (err) {
@@ -76,7 +121,7 @@ router.get("/:id", function (req, res, next) {
  * @apiParam {String} id Unique identifier of the user
  * 
  * @apiSuccess {Object[]} tricks of the user with the given id
- */
+ */
 router.get("/:id/tricks", function (req, res, next) {
   User.findOne({ _id: req.params.id }).exec(function (err, user) {
     if (err) {
@@ -129,7 +174,7 @@ router.get("/:id/tricks", function (req, res, next) {
  * @apiParam {String} userName of the user
  * 
  * @apiSuccess {Object[]} creation of new user
- */
+ */
 router.post("/", function (req, res, next) {
   //To hash the password
   const plainPassword = req.body.password;
@@ -162,7 +207,7 @@ router.post("/", function (req, res, next) {
  * @apiParam {String} id Unique identifier of the user 
  * 
  * @apiSuccess {Object[]} with all the users without the deleted one
- */
+ */
 router.delete("/:id", authenticate, function (req, res, next) {
   User.findOne({ _id: req.params.id }).exec(function (err, user) {
     if (err) {
@@ -191,7 +236,7 @@ router.delete("/:id", authenticate, function (req, res, next) {
  * @apiParam {String} id Unique identifier of the user 
  * 
  * @apiSuccess {Object[]} Updated user
- */
+ */
 router.put("/:id", authenticate, function (req, res, next) {
   //User can update his own profile
   User.findOne({ _id: req.params.id }).exec(function (err, user) {
