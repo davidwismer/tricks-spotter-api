@@ -36,7 +36,7 @@ router.get("/", function (req, res, next) {
       if (err) {
         return next(err);
       }
-      res.send({
+      res.status(200).send({
         data: tricks,
         page: page,
         pageSize: pageSize,
@@ -61,7 +61,7 @@ router.get("/:id", function (req, res, next) {
     if (err) {
       return next(err)
     }
-    res.send(trick)
+    res.status(200).send(trick)
   })
 });
 
@@ -88,7 +88,7 @@ router.post("/", authenticate, function (req, res, next) {
     if (err) {
       return next(err)
     }
-    res.send(savedTrick)
+    res.status(201).send(savedTrick)
   })
 });
 
@@ -114,7 +114,7 @@ router.delete("/:id", authenticate, function (req, res, next) {
         if (err) {
           return next(err)
         }
-        res.send(removedTrick)
+        res.status(200).send(removedTrick)
       })
     } else {
       res.status(403).send("Don't have the rights to do that")
@@ -147,7 +147,7 @@ router.put("/:id", authenticate, function (req, res, next) {
         if (err) {
           return next(err)
         }
-        res.send(updatedTrick)
+        res.status(200).send(updatedTrick)
       })
     } else {
       res.status(403).send("Don't have the rights to do that")

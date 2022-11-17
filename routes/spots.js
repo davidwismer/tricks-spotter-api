@@ -39,7 +39,7 @@ router.get("/", function (req, res, next) {
     if (err) {
       return next(err);
     }
-    res.send({
+    res.status(200).send({
       data: spots,
       page: page,
       pageSize: pageSize,
@@ -63,7 +63,7 @@ router.get("/:id", function (req, res, next) {
     if (err) {
       return next(err)
     }
-    res.send(spot)
+    res.status(200).send(spot)
   })
 });
 
@@ -105,7 +105,7 @@ router.get("/:id/tricks", function (req, res, next) {
         if (err) {
           return next(err);
         }
-        res.send({
+        res.status(200).send({
           data: tricks,
           page: page,
           pageSize: pageSize,
@@ -144,7 +144,7 @@ router.post("/", authenticate, function (req, res, next) {
         if (err) {
           return next(err)
         }
-        res.send(savedSpot)
+        res.status(201).send(savedSpot)
       })
     } else {
       res.status(403).send("Only admins can do this")
@@ -174,7 +174,7 @@ router.delete("/:id", authenticate, function (req, res, next) {
         if (err) {
           return next(err)
         }
-        res.send(removedSpot)
+        res.status(200).send(removedSpot)
       })
     } else {
       res.status(403).send("You don't have the rights to do that")
@@ -211,7 +211,7 @@ router.put("/:id", authenticate, function (req, res, next) {
         if (err) {
           return next(err);
         }
-        res.send(updatedSpot);
+        res.status(200).send(updatedSpot);
       })
     }else{
       res.status(403).send("You don't have the rights to do that")

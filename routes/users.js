@@ -84,7 +84,7 @@ router.get("/", function (req, res, next) {
       if (err) {
         return next(err);
       }
-      res.send(users.map(user => {
+      res.status(200).send(users.map(user => {
         const serialized = new User(user).toJSON() //Transform user to Mongoose model
         serialized.tricksPosted = user.tricksPosted //Add the aggregated property
         return serialized
@@ -108,7 +108,7 @@ router.get("/:id", function (req, res, next) {
     if (err) {
       return next(err)
     }
-    res.send(user)
+    res.status(200).send(user)
   })
 });
 
@@ -150,7 +150,7 @@ router.get("/:id/tricks", function (req, res, next) {
         if (err) {
           return next(err);
         }
-        res.send({
+        res.status(200).send({
           data: tricks,
           page: page,
           pageSize: pageSize,
@@ -192,7 +192,7 @@ router.post("/", function (req, res, next) {
       if (err) {
         return next(err)
       }
-      res.send(savedUser)
+      res.status(201).send(savedUser)
     })
   })
 })
@@ -219,7 +219,7 @@ router.delete("/:id", authenticate, function (req, res, next) {
         if (err) {
           return next(err)
         }
-        res.send(removedUser)
+        res.status(200).send(removedUser)
       })
     } else {
       res.status(403).send("Don't have the rights to do that")
@@ -253,7 +253,7 @@ router.put("/:id", authenticate, function (req, res, next) {
         if (err) {
           return next(err);
         }
-        res.send(updatedUser)
+        res.status(200).send(updatedUser)
       })
     } else {
       //If this is not the current user connected's profile, but he is an admin, he can grant the admin role to the user.
@@ -268,7 +268,7 @@ router.put("/:id", authenticate, function (req, res, next) {
             if (err) {
               return next(err);
             }
-            res.send(updatedUser);
+            res.status(200).send(updatedUser);
           })
         } else {//This is not an admin, but he tries to modify somebody elses profile
           res.status(403).send("Don't have the rights to do that")
