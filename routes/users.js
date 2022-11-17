@@ -54,7 +54,7 @@ router.get("/", function (req, res, next) {
  * @apiName GetUser
  * @apiGroup User
  * 
- * @apiParam {mongoose.ObjectId} id Unique identifier of the user
+ * @apiParam {String} id Unique identifier of the user
  * 
  * @apiSuccess {Object[]} the user with the given id
  */
@@ -68,6 +68,15 @@ router.get("/:id", function (req, res, next) {
 });
 
 //Get all the tricks of a user
+/**
+ * @api {get} /users/:id/tricks Request all the tricks of a user
+ * @apiName GetUserTricks
+ * @apiGroup User
+ * 
+ * @apiParam {String} id Unique identifier of the user
+ * 
+ * @apiSuccess {Object[]} tricks of the user with the given id
+ */
 router.get("/:id/tricks", function (req, res, next) {
   User.findOne({ _id: req.params.id }).exec(function (err, user) {
     if (err) {
@@ -109,6 +118,18 @@ router.get("/:id/tricks", function (req, res, next) {
 
 ///////////////////////////////////////////POST
 //Create new user
+/**
+ * @api {post} /users to create a new user
+ * @apiName PostUser
+ * @apiGroup User
+ * 
+ * @apiParam {Boolean} is the user an admin or not 
+ * @apiParam {String} firstName of the user
+ * @apiParam {String} lastName of the user
+ * @apiParam {String} userName of the user
+ * 
+ * @apiSuccess {Object[]} creation of new user
+ */
 router.post("/", function (req, res, next) {
   //To hash the password
   const plainPassword = req.body.password;
@@ -133,6 +154,15 @@ router.post("/", function (req, res, next) {
 
 ////////////////////////////////////////////DELETE
 //Delete user by id
+/**
+ * @api {delete} /users/:id to delete a user
+ * @apiName DeleteUser
+ * @apiGroup User
+ * 
+ * @apiParam {String} id Unique identifier of the user 
+ * 
+ * @apiSuccess {Object[]} with all the users without the deleted one
+ */
 router.delete("/:id", authenticate, function (req, res, next) {
   User.findOne({ _id: req.params.id }).exec(function (err, user) {
     if (err) {
@@ -153,6 +183,15 @@ router.delete("/:id", authenticate, function (req, res, next) {
 })
 
 ///////////////////////////////////////////PUT
+/**
+ * @api {put} /users/:id to modify a user
+ * @apiName ModifyUser
+ * @apiGroup User
+ * 
+ * @apiParam {String} id Unique identifier of the user 
+ * 
+ * @apiSuccess {Object[]} Updated user
+ */
 router.put("/:id", authenticate, function (req, res, next) {
   User.findOne({ _id: req.params.id }).exec(function (err, user) {
     if (err) {
