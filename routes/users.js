@@ -54,9 +54,9 @@ router.get("/", function (req, res, next) {
  * @apiName GetUser
  * @apiGroup User
  * 
- * @apiParam {String} id Unique identifier of the user
+ * @apiParam {String} UserId id Unique identifier of the user
  * 
- * @apiSuccess {Object[]} the user with the given id
+ * @apiSuccess {Object[]} UserById the user with the given id
  */
 router.get("/:id", function (req, res, next) {
   User.findOne({ _id: req.params.id }).exec(function (err, user) {
@@ -73,9 +73,9 @@ router.get("/:id", function (req, res, next) {
  * @apiName GetUserTricks
  * @apiGroup User
  * 
- * @apiParam {String} id Unique identifier of the user
+ * @apiParam {String} UserId id Unique identifier of the user
  * 
- * @apiSuccess {Object[]} tricks of the user with the given id
+ * @apiSuccess {Object[]} UserTricks tricks of the user with the given id
  */
 router.get("/:id/tricks", function (req, res, next) {
   User.findOne({ _id: req.params.id }).exec(function (err, user) {
@@ -123,12 +123,12 @@ router.get("/:id/tricks", function (req, res, next) {
  * @apiName PostUser
  * @apiGroup User
  * 
- * @apiParam {Boolean} is the user an admin or not 
- * @apiParam {String} firstName of the user
- * @apiParam {String} lastName of the user
- * @apiParam {String} userName of the user
+ * @apiParam {Boolean} Admin is the user an admin or not 
+ * @apiParam {String} firstName firstName of the user
+ * @apiParam {String} lastName lastName of the user
+ * @apiParam {String} userName userName of the user
  * 
- * @apiSuccess {Object[]} creation of new user
+ * @apiSuccess {Object[]} NewUser creation of new user
  */
 router.post("/", function (req, res, next) {
   //To hash the password
@@ -159,9 +159,9 @@ router.post("/", function (req, res, next) {
  * @apiName DeleteUser
  * @apiGroup User
  * 
- * @apiParam {String} id Unique identifier of the user 
+ * @apiParam {String} UserId id Unique identifier of the user 
  * 
- * @apiSuccess {Object[]} with all the users without the deleted one
+ * @apiSuccess {Object[]} DeletedUser the deleted user 
  */
 router.delete("/:id", authenticate, function (req, res, next) {
   User.findOne({ _id: req.params.id }).exec(function (err, user) {
@@ -188,9 +188,9 @@ router.delete("/:id", authenticate, function (req, res, next) {
  * @apiName ModifyUser
  * @apiGroup User
  * 
- * @apiParam {String} id Unique identifier of the user 
+ * @apiParam {String} UserId id Unique identifier of the user 
  * 
- * @apiSuccess {Object[]} Updated user
+ * @apiSuccess {Object[]} UpdatedUser Updated user
  */
 router.put("/:id", authenticate, function (req, res, next) {
   User.findOne({ _id: req.params.id }).exec(function (err, user) {
