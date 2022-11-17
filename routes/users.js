@@ -49,6 +49,15 @@ router.get("/", function (req, res, next) {
 });
 
 //Get user by id
+/**
+ * @api {get} /users/:id Request a user's information
+ * @apiName GetUser
+ * @apiGroup User
+ * 
+ * @apiParam {mongoose.ObjectId} id Unique identifier of the user
+ *
+ * @apiSuccess {Object[]} users List of users
+ */
 router.get("/:id", function (req, res, next) {
   User.findOne({ _id: req.params.id }).exec(function (err, user) {
     if (err) {
