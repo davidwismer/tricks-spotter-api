@@ -7,6 +7,13 @@ const router = express.Router();
 
 //////////////////////////////////////////GET
 //get all spots
+/**
+ * @api {get} /spots Request a list of the spots
+ * @apiName GetSpots
+ * @apiGroup Spot
+ *
+ * @apiSuccess {Object[]} spots List of spots
+ */
 router.get("/", function (req, res, next) {
   //To filter the spots by category
   let query = Spot.find().sort({creationDate: -1})
@@ -42,6 +49,15 @@ router.get("/", function (req, res, next) {
 })
 
 //Get spot by id
+/**
+ * @api {get} /spots/:id Request a spot's information
+ * @apiName GetSpot
+ * @apiGroup Spot
+ * 
+ * @apiParam {mongoose.ObjectId} id unique identifier of the spot
+ * 
+ * @apiSuccess {Object[]} the spot's informations with the given id
+ */
 router.get("/:id", function (req, res, next) {
   Spot.findOne({ _id: req.params.id }).exec(function (err, spot) {
     if (err) {
@@ -52,6 +68,15 @@ router.get("/:id", function (req, res, next) {
 });
 
 //Get all the tricks of a spot
+/**
+ * @api {get} /spots/:id Request a spot's information
+ * @apiName GetSpot
+ * @apiGroup Spot
+ * 
+ * @apiParam {mongoose.ObjectId} id unique identifier of the spot
+ * 
+ * @apiSuccess {Object[]} the spot's informations with the given id
+ */
 router.get("/:id/tricks", function (req, res, next) {
   Spot.findOne({ _id: req.params.id }).exec(function (err, user) {
     if (err) {
