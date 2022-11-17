@@ -10,7 +10,7 @@ router.get("/", function (req, res, next) {
     if (err) {
       return next(err);
     }
-    let query = Trick.find().sort({creationDate: -1})
+    let query = Trick.find().sort({ creationDate: -1 })
     const maxPage = 10
 
     let page = parseInt(req.query.page, 10);
@@ -52,6 +52,8 @@ router.get("/:id", function (req, res, next) {
 ////////////////////////////////////////////POST
 //Create new trick
 router.post("/", authenticate, function (req, res, next) {
+  //Sets the userId to the id of the connected user
+  req.body.userId = req.currentUserId
   //Get the trick created
   const newTrick = new Trick(req.body)
   //save new trick created
@@ -79,7 +81,7 @@ router.delete("/:id", authenticate, function (req, res, next) {
         res.send(removedTrick)
       })
     } else {
-      res.send("Don't have the rights to do that")
+      res.status(403).send("Don't have the rights to do that")
     }
   })
 })
@@ -102,7 +104,7 @@ router.put("/:id", authenticate, function (req, res, next) {
         res.send(updatedTrick)
       })
     } else {
-      res.send("Don't have the rights to do that")
+      res.status(403).send("Don't have the rights to do that")
     }
   })
 })

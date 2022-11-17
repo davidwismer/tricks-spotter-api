@@ -16,12 +16,12 @@ router.get("/", function (req, res, next) {
 
   //To paginate the spots
   const maxPage = 10 //Max elements per page
-  let page = parseInt(req.query.page, maxPage);
+  let page = parseInt(req.query.page, 10);
   if (isNaN(page) || page < 1) {
     page = 1
   }
 
-  let pageSize = parseInt(req.query.pageSize, maxPage);
+  let pageSize = parseInt(req.query.pageSize, 10);
   if (isNaN(pageSize) || pageSize < 0 || pageSize > maxPage) {
     pageSize = maxPage;
   }
@@ -109,7 +109,7 @@ router.post("/", authenticate, function (req, res, next) {
         res.send(savedSpot)
       })
     } else {
-      res.send("You don't have the rights to do that")
+      res.status(403).send("Only admins can do this")
     }
   })
 })
@@ -130,7 +130,7 @@ router.delete("/:id", authenticate, function (req, res, next) {
         res.send(removedSpot)
       })
     } else {
-      res.send("You don't have the rights to do that")
+      res.status(403).send("You don't have the rights to do that")
     }
   })
 
@@ -157,7 +157,7 @@ router.put("/:id", authenticate, function (req, res, next) {
         res.send(updatedSpot);
       })
     }else{
-      res.send("You don't have the rights to do that")
+      res.status(403).send("You don't have the rights to do that")
     }
   })
 

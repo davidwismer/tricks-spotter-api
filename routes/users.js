@@ -19,7 +19,7 @@ router.get("/", function (req, res, next) {
     if (err) {
       return next(err);
     }
-    let query = User.find().sort({creationDate: -1})
+    let query = User.find().sort({ creationDate: -1 })
     const maxPage = 10
 
     let page = parseInt(req.query.page, 10);
@@ -68,7 +68,7 @@ router.get("/:id/tricks", function (req, res, next) {
       if (err) {
         return next(err);
       }
-      let query = Trick.find({ userId: req.params.id }).sort({creationDate: -1})
+      let query = Trick.find({ userId: req.params.id }).sort({ creationDate: -1 })
       const maxPage = 10
 
       let page = parseInt(req.query.page, 10);
@@ -138,33 +138,49 @@ router.delete("/:id", authenticate, function (req, res, next) {
         res.send(removedUser)
       })
     } else {
-      res.send("Don't have the rights to do that")
+      res.status(403).send("Don't have the rights to do that")
     }
   })
 })
 
 ///////////////////////////////////////////PUT
 router.put("/:id", authenticate, function (req, res, next) {
+  //User can update his own profile
   User.findOne({ _id: req.params.id }).exec(function (err, user) {
     if (err) {
       return next(err)
     }
-    //If the correct user is logged in we update it
+    //If the correct user is logged in he can update his profile (can't change the role)
     if (req.params.id == req.currentUserId) {
       User.findByIdAndUpdate({ _id: req.params.id }, {
-        admin: req.body.admin,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
-        userName: req.body.userName,
-        password: req.body.password
+        userName: req.body.userName
       }, { new: true, runValidators: true }).exec(function (err, updatedUser) {
         if (err) {
           return next(err);
         }
-        res.send(updatedUser);
+        res.send(updatedUser)
       })
     } else {
-      res.send("Don't have the rights to do that")
+      //If this is not the current user connected's profile, but he is an admin, he can grant the admin role to the user.
+      User.findOne({ _id: req.currentUserId }).exec(function (err, user) {
+        if (err) {
+          return next(err)
+        }
+        if (user.admin) {
+          User.findByIdAndUpdate({ _id: req.params.id }, {
+            admin: req.body.admin
+          }, { new: true, runValidators: true }).exec(function (err, updatedUser) {
+            if (err) {
+              return next(err);
+            }
+            res.send(updatedUser);
+          })
+        } else {//This is not an admin, but he tries to modify somebody elses profile
+          res.status(403).send("Don't have the rights to do that")
+        }
+      })
     }
   })
 })
@@ -172,7 +188,6 @@ router.put("/:id", authenticate, function (req, res, next) {
 
 //Delete all for tests ON DOIT EFFACER CA AVANT DE RENDRE
 router.delete("/", function (req, res, next) {
-  console.log("wtf")
   User.deleteMany().exec(function (err, users) {
     if (err) {
       return next(err)
