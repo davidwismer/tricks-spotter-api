@@ -1,6 +1,8 @@
 import express from "express";
 import { Trick } from "../model/Trick.js";
+import { User } from "../model/User.js"
 import authenticate from "../utils/auth.js";
+import { broadcastMessage } from "../ws.js";
 const router = express.Router();
 
 //////////////////////////////////////////GET
@@ -77,7 +79,7 @@ router.get("/:id", function (req, res, next) {
  * @apiParam {String} userid Id of the user who did the trick
  * 
  * @apiSuccess {Object[]} NewTrick created with the trick's informations
- */
+ */
 router.post("/", authenticate, function (req, res, next) {
   //Sets the userId to the id of the connected user
   req.body.userId = req.currentUserId
@@ -89,6 +91,13 @@ router.post("/", authenticate, function (req, res, next) {
       return next(err)
     }
     res.status(201).send(savedTrick)
+    //Send message to wss if trick created with the user that posted it
+    User.findOne({ _id: req.currentUserId }).exec(function (err, user) {
+      if (err) {
+        return next(err)
+      }
+      broadcastMessage({ Update: `New trick has been posted by ${user.userName}`, newTrick: savedTrick })
+    })
   })
 });
 

@@ -3,6 +3,7 @@ import { Spot } from "../model/Spot.js";
 import { Trick } from "../model/Trick.js"
 import { User } from "../model/User.js";
 import authenticate from "../utils/auth.js";
+import { broadcastMessage } from "../ws.js";
 const router = express.Router();
 
 //////////////////////////////////////////GET
@@ -145,6 +146,7 @@ router.post("/", authenticate, function (req, res, next) {
           return next(err)
         }
         res.status(201).send(savedSpot)
+        broadcastMessage({ Update: `New Spot available to ride`, newSpot: savedSpot })
       })
     } else {
       res.status(403).send("Only admins can do this")

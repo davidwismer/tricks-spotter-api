@@ -7,6 +7,7 @@
 import app from "../app.js";
 import createDebugger from "debug";
 import http from "http";
+import { createWSServer } from '../ws.js';
 
 const debug = createDebugger('tricks-spotter-api:server')
 /**
@@ -85,3 +86,6 @@ function onListening() {
   const bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
   debug("Listening on " + bind);
 }
+
+//Create the web socket server
+createWSServer(server);

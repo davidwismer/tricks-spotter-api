@@ -102,7 +102,7 @@ router.get("/", function (req, res, next) {
  * @apiParam {String} UserId id Unique identifier of the user
  * 
  * @apiSuccess {Object[]} the user with the given id
- */
+ */
 router.get("/:id", function (req, res, next) {
   User.findOne({ _id: req.params.id }).exec(function (err, user) {
     if (err) {
@@ -121,7 +121,7 @@ router.get("/:id", function (req, res, next) {
  * @apiParam {String} UserId id Unique identifier of the user
  * 
  * @apiSuccess {Object[]} UserTricks tricks of the user with the given id
- */
+ */
 router.get("/:id/tricks", function (req, res, next) {
   User.findOne({ _id: req.params.id }).exec(function (err, user) {
     if (err) {
@@ -174,7 +174,7 @@ router.get("/:id/tricks", function (req, res, next) {
  * @apiParam {String} userName userName of the user
  * 
  * @apiSuccess {Object[]} NewUser creation of new user
- */
+ */
 router.post("/", function (req, res, next) {
   //To hash the password
   const plainPassword = req.body.password;
@@ -207,7 +207,7 @@ router.post("/", function (req, res, next) {
  * @apiParam {String} UserId id Unique identifier of the user 
  * 
  * @apiSuccess {Object[]} DeletedUser the deleted user 
- */
+ */
 router.delete("/:id", authenticate, function (req, res, next) {
   User.findOne({ _id: req.params.id }).exec(function (err, user) {
     if (err) {
@@ -236,19 +236,28 @@ router.delete("/:id", authenticate, function (req, res, next) {
  * @apiParam {String} UserId id Unique identifier of the user 
  * 
  * @apiSuccess {Object[]} UpdatedUser Updated user
- */
+ */
 router.put("/:id", authenticate, function (req, res, next) {
   //User can update his own profile
-  User.findOne({ _id: req.params.id }).exec(function (err, user) {
+  User.findOne({ _id: req.params.id }).exec( async function (err, user) {
     if (err) {
       return next(err)
     }
     //If the correct user is logged in he can update his profile (can't change the role)
     if (req.params.id == req.currentUserId) {
-      User.findByIdAndUpdate({ _id: req.params.id }, {
+      //Hash the new password
+      let modif = req.body
+      if (req.body.password !== 'undefined') {
+        const plainPassword = req.body.password || '';
+        const costFactor = 10;
+        const hashedPassword = await bcrypt.hash(plainPassword, costFactor)
+        modif.password = hashedPassword
+      }
+      await User.findByIdAndUpdate({ _id: req.params.id }, {
         firstName: req.body.firstName,
         lastName: req.body.lastName,
-        userName: req.body.userName
+        userName: req.body.userName,
+        password: modif.password
       }, { new: true, runValidators: true }).exec(function (err, updatedUser) {
         if (err) {
           return next(err);
