@@ -192,7 +192,7 @@ router.delete("/:id", authenticate, function (req, res, next) {
  * 
  * @apiParam {String} id Unique identifier of the spot
  * 
- * @apiSuccess
+ * @apiSuccess {Object[]} the spot updated
  **/
 router.put("/:id", authenticate, function (req, res, next) {
   User.findOne({ _id: req.currentUserId }).exec(function (err, user) {
