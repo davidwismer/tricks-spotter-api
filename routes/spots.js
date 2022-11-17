@@ -7,6 +7,13 @@ const router = express.Router();
 
 //////////////////////////////////////////GET
 //get all spots
+/**
+ * @api {get} /spots Request a list of the spots
+ * @apiName GetSpots
+ * @apiGroup Spot
+ *
+ * @apiSuccess {Object[]} spots List of spots
+ */
 router.get("/", function (req, res, next) {
   //To filter the spots by category
   let query = Spot.find().sort({creationDate: -1})
@@ -42,6 +49,15 @@ router.get("/", function (req, res, next) {
 })
 
 //Get spot by id
+/**
+ * @api {get} /spots/:id Request a spot's information
+ * @apiName GetSpot
+ * @apiGroup Spot
+ * 
+ * @apiParam {String} id Unique identifier of the spot
+ * 
+ * @apiSuccess {Object[]} the spot with the given id
+ */
 router.get("/:id", function (req, res, next) {
   Spot.findOne({ _id: req.params.id }).exec(function (err, spot) {
     if (err) {
@@ -52,6 +68,15 @@ router.get("/:id", function (req, res, next) {
 });
 
 //Get all the tricks of a spot
+/**
+ * @api {get} /spots/:id/tricks Request a list of the tricks of a spot
+ * @apiName GetSpotTricks
+ * @apiGroup Spot
+ * 
+ * @apiParam {String} id Unique identifier of the spot
+ * 
+ * @apiSuccess {Object[]} tricks of the spot with the given id
+ */
 router.get("/:id/tricks", function (req, res, next) {
   Spot.findOne({ _id: req.params.id }).exec(function (err, user) {
     if (err) {
@@ -93,6 +118,19 @@ router.get("/:id/tricks", function (req, res, next) {
 
 ////////////////////////////////////////////POST
 //Create new spot
+/**
+ * @api {post} /spots Create a new spot
+ * @apiName PostSpot
+ * @apiGroup Spot
+ * 
+ * @apiParam {String} name Name of the spot
+ * @apiParam {String} description Description of the spot
+ * @apiParam {String} category Category of the spot
+ * @apiParam {Object[]} geolocation Geolocation of the spot
+ * @apiParam {String} picture Picture's name of the spot
+ * 
+ * @apiSuccess {Object[]} created with the spot's informations
+ */
 router.post("/", authenticate, function (req, res, next) {
   User.findOne({ _id: req.currentUserId }).exec(function (err, user) {
     if (err) {
@@ -117,6 +155,15 @@ router.post("/", authenticate, function (req, res, next) {
 
 //////////////////////////////////////////DELETE
 //Delete spot by id
+/**
+ * @api {delete} /spots/:id Delete a spot
+ * @apiName DeleteSpot
+ * @apiGroup Spot
+ * 
+ * @apiParam {String} id Unique identifier of the spot
+ * 
+ * @apiSuccess {Object[]} all the spots without the deleted one
+ **/
 router.delete("/:id", authenticate, function (req, res, next) {
   User.findOne({ _id: req.currentUserId }).exec(function (err, user) {
     if (err) {
@@ -137,6 +184,16 @@ router.delete("/:id", authenticate, function (req, res, next) {
 })
 
 //////////////////////////////////////////PUT
+//Update spot by id
+/**
+ * @api {put} /spots/:id Update a spot
+ * @apiName PutSpot
+ * @apiGroup Spot
+ * 
+ * @apiParam {String} id Unique identifier of the spot
+ * 
+ * @apiSuccess {Object[]} the spot updated
+ **/
 router.put("/:id", authenticate, function (req, res, next) {
   User.findOne({ _id: req.currentUserId }).exec(function (err, user) {
     if (err) {
