@@ -157,6 +157,9 @@ router.post("/", authenticate, function (req, res, next) {
   req.body.userId = req.currentUserId
   //Check if the spot exists
   Spot.countDocuments({ _id: req.body.spotId }), function (err, count) {
+    if(err){
+      return next(err)
+    }
     if (count > 0) {//document exists });
       //Get the trick created
       const newTrick = new Trick(req.body)
@@ -177,7 +180,6 @@ router.post("/", authenticate, function (req, res, next) {
     } else {
       res.status(400).send("Spot doesn't exist")
     }
-
   }
 });
 
