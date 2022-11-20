@@ -12,7 +12,38 @@ const router = express.Router();
  * @apiName GetTricks
  * @apiGroup Trick
  * 
- * @apiSuccess {Object[]} tricks List of all tricks
+ * @apiQuery {Number} pageSize The number of element to show on a page (pagination)
+ * @apiQuery {Number} page The page number that you want to show (pagination)
+ * 
+ *
+ * @apiSuccess {Object[]} data The informations of the tricks
+ * @apiSuccess {String} data.name Name of the tricks
+ * @apiSuccess {String} data.video Video url of the tricks
+ * @apiSuccess {String} data.spotId Id of the spot linked to the tricks
+ * @apiSuccess {String} data.userId Id of the user linked to the tricks
+ * @apiSuccess {Date} data.creationDate Creation date of the tricks
+ * @apiSuccess {String} data._id Id of the trick
+ * @apiSuccess {Number} page The page number currently showing
+ * @apiSuccess {Number} pageSize The number of tricks showing on each page
+ * @apiSuccess {Number} total The total number of tricks
+ * 
+ * @apiSuccessExample {json} Succes-Response:
+ *HTTP/1.1 200 OK
+ *
+  "data": [
+    {
+      "_id": "635fd5bffc9a001b10da7bf4",
+      "name": "Nose Slide",
+      "spotid": "63722faad51dd796f41ecd7f",
+      "userid": "635fa221cf9e52f60af3c8f0",
+      "creationDate": "2022-10-31T14:03:43.952Z",
+      "video": "video.mp4"
+    }
+  ],
+  "page": 1,
+  "pageSize": 10,
+  "total": 1
+}
  */
 router.get("/", function (req, res, next) {
   Trick.find().count(function (err, total) { //To paginate the tricks
@@ -54,9 +85,25 @@ router.get("/", function (req, res, next) {
  * @apiName GetTrick
  * @apiGroup Trick
  * 
- * @apiParam {string} TrickId id Unique identifier of the trick
+ * @apiParam {String} id The unique id that defines a trick
  * 
- * @apiSuccess {Object[]} TrickById the trick with the given id
+ * @apiSuccess {String} name Name of the trick
+ * @apiSuccess {String} video Video url of the trick
+ * @apiSuccess {String} spotId Id of the spot linked to the trick
+ * @apiSuccess {String} userId Id of the user linked to the trick
+ * @apiSuccess {Date} creationDate Creation date of the trick
+ * @apiSuccess {String} _id Id of the trick
+ * 
+ * @apiSuccessExample {json} Succes-Response:
+ *HTTP/1.1 200 OK
+ {
+      "_id": "635fd5bffc9a001b10da7bf4",
+      "name": "Nose Slide",
+      "spotid": "63722faad51dd796f41ecd7f",
+      "userid": "635fa221cf9e52f60af3c8f0",
+      "creationDate": "2022-10-31T14:03:43.952Z",
+      "video": "video.mp4"
+    }
  */
 router.get("/:id", function (req, res, next) {
   Trick.findOne({ _id: req.params.id }).exec(function (err, trick) {
@@ -73,12 +120,36 @@ router.get("/:id", function (req, res, next) {
  * @api {post} /tricks Create a new trick
  * @apiName PostTrick
  * @apiGroup Trick
+ * @apiPermission loged in
  * 
- * @apiParam {String} name Name of the trick
- * @apiParam {String} spotid Id of the spot where the trick is done
- * @apiParam {String} userid Id of the user who did the trick
+ * @apiHeader {String} BearerToken The token of the user connected
  * 
- * @apiSuccess {Object[]} NewTrick created with the trick's informations
+ * @apiBody {String{3..50}} name Mandatory name of the tricks
+ * @apiBody {String} video Mandatory video url of the tricks
+ * @apiBody {String} spotId Mandatory id of the spot linked to the tricks
+ * @apiBody {String} userId Mandatory id of the user linked to the tricks (It is automatically set to the connected user)
+ * @apiBody {Date} [creationDate] Optional creation date of the tricks
+ * 
+ * @apiSuccess (Success 201) {String} name Name of the trick
+ * @apiSuccess (Success 201) {String} video Video url of the trick
+ * @apiSuccess (Success 201) {String} spotId Id of the spot linked to the trick
+ * @apiSuccess (Success 201) {String} userId Id of the user linked to the trick
+ * @apiSuccess (Success 201) {Date} creationDate Creation date of the trick 
+ * @apiSuccess (Success 201) {String} _id Id of the trick
+ * 
+ * @apiSuccessExample {json} Succes-Response:
+ *HTTP/1.1 201 OK
+ * {
+      "_id": "635fd5bffc9a001b10da7bf4",
+      "name": "Nose Slide",
+      "spotid": "63722faad51dd796f41ecd7f",
+      "userid": "635fa221cf9e52f60af3c8f0",
+      "creationDate": "2022-10-31T14:03:43.952Z",
+      "video": "video.mp4"
+    }
+ * @apiError (401 Unauthorized) NotConnected The Bearer Token is missing
+ * @apiError (401 Unauthorized) NotABearerToken Not a Bearer Token in header
+ * @apiError (401 Unauthorized) InvalidToken The token in the header is invalid or expired
  */
 router.post("/", authenticate, function (req, res, next) {
   //Sets the userId to the id of the connected user
@@ -107,10 +178,34 @@ router.post("/", authenticate, function (req, res, next) {
  * @api {delete} /tricks/:id Delete a trick
  * @apiName DeleteTrick
  * @apiGroup Trick
+ * @apiPermission loged in
  * 
- * @apiParam {String} TrickId id Unique identifier of the trick
+ * @apiHeader {String} BearerToken The token of the user connected
  * 
- * @apiSuccess {Object[]} DeletedTrick the deleted trick 
+ * @apiParam {String} id The unique id that identifies a trick 
+ * 
+ * @apiSuccess {String} name Name of the trick deleted
+ * @apiSuccess {String} video Video url of the trick deleted
+ * @apiSuccess {String} spotId Id of the spot linked to the trick deleted
+ * @apiSuccess {String} userId Id of the user linked to the trick deleted
+ * @apiSuccess {Date} creationDate Creation date of the trick deleted 
+ * @apiSuccess {String} _id Id of the trick deleted
+ * 
+ * @apiSuccessExample {json} Succes-Response:
+ * HTTP/1.1 200 OK
+ * {
+      "_id": "635fd5bffc9a001b10da7bf4",
+      "name": "Nose Slide",
+      "spotid": "63722faad51dd796f41ecd7f",
+      "userid": "635fa221cf9e52f60af3c8f0",
+      "creationDate": "2022-10-31T14:03:43.952Z",
+      "video": "video.mp4"
+    }
+ * 
+ * @apiError (401 Unauthorized) NotConnected The Bearer Token is missing
+ * @apiError (401 Unauthorized) NotABearerToken Not a Bearer Token in header
+ * @apiError (401 Unauthorized) InvalidToken The token in the header is invalid or expired
+ * @apiError (403 Forbidden) NotAllowed The connected user is trying to delete a trick of another user
  */
 router.delete("/:id", authenticate, function (req, res, next) {
   Trick.findOne({ _id: req.params.id }).exec(function (err, trick) {
@@ -137,10 +232,37 @@ router.delete("/:id", authenticate, function (req, res, next) {
  * @api {put} /tricks/:id Update a trick
  * @apiName PutTrick
  * @apiGroup Trick
+ * @apiPermission loged in
  * 
- * @apiParam {String} id Unique identifier of the trick
+ * @apiHeader {String} BearerToken The token of the user connected
  * 
- * @apiSuccess {Object[]} UpdatedTrick the trick updated
+ * @apiParam {String} id The unique id that identifies a trick 
+ * 
+ * @apiBody {String{3..50}} [name] Optional name of the tricks
+ * @apiBody {String} [video] Optional video url of the tricks
+ * 
+ * @apiSuccess {String} name Name of the trick updated
+ * @apiSuccess {String} video Video url of the trick updated
+ * @apiSuccess {String} spotId Id of the spot linked to the trick updated
+ * @apiSuccess {String} userId Id of the user linked to the trick updated
+ * @apiSuccess {Date} creationDate Creation date of the trick updated 
+ * @apiSuccess {String} _id Id of the trick updated
+ * 
+ * @apiSuccessExample {json} Succes-Response:
+ * HTTP/1.1 200 OK
+ * {
+      "_id": "635fd5bffc9a001b10da7bf4",
+      "name": "Nose Slide",
+      "spotid": "63722faad51dd796f41ecd7f",
+      "userid": "635fa221cf9e52f60af3c8f0",
+      "creationDate": "2022-10-31T14:03:43.952Z",
+      "video": "video.mp4"
+    }
+ * 
+ * @apiError (401 Unauthorized) NotConnected The Bearer Token is missing
+ * @apiError (401 Unauthorized) NotABearerToken Not a Bearer Token in header
+ * @apiError (401 Unauthorized) InvalidToken The token in the header is invalid or expired
+ * @apiError (403 Forbidden) NotAllowed The connected user is trying to update a trick of another user
  */
 router.put("/:id", authenticate, function (req, res, next) {
   Trick.findOne({ _id: req.params.id }).exec(function (err, trick) {

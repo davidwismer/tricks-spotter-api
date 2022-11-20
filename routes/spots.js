@@ -32,7 +32,7 @@ const router = express.Router();
  * 
  * @apiSuccessExample {json} Succes-Response:
  *HTTP/1.1 200 OK
- *[
+ *{
   "data":[
      {
         "name": "Ledges d'Ouchy",
@@ -57,7 +57,7 @@ const router = express.Router();
   "page": 1,
   "pageSize": 10,
   "total": 2
-]
+  }
  */
 router.get("/", function (req, res, next) {
   //To filter the spots by category
@@ -363,14 +363,14 @@ router.delete("/:id", authenticate, function (req, res, next) {
  * @apiBody {String} [picture] Optional picture url of the spot
  * @apiBody {Number{1..10}} [rating] Optional rating of the spot
  * 
- * @apiSuccess {String} name Name of the spot deleted
- * @apiSuccess {String} description Description of the spot deleted
- * @apiSuccess {String[]} category Category of the spot deleted
- * @apiSuccess {Number[]} geolocation Geolocation of the spot deleted
- * @apiSuccess {String} picture Picture url of the spot deleted
- * @apiSuccess {Number} rating Rating of the spot deleted
- * @apiSuccess {String} creationDate Creation date of the spot deleted
- * @apiSuccess {String} _id Id of the spot deleted
+ * @apiSuccess {String} name Name of the spot updated
+ * @apiSuccess {String} description Description of the spot updated
+ * @apiSuccess {String[]} category Category of the spot updated
+ * @apiSuccess {Number[]} geolocation Geolocation of the spot updated
+ * @apiSuccess {String} picture Picture url of the spot updated
+ * @apiSuccess {Number} rating Rating of the spot updated
+ * @apiSuccess {String} creationDate Creation date of the spot updated
+ * @apiSuccess {String} _id Id of the spot updated
  * 
  * @apiSuccessExample {json} Succes-Response:
  * HTTP/1.1 200 OK
