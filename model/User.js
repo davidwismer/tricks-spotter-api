@@ -13,22 +13,26 @@ let userSchema = new Schema({
     firstName: {
         type: String,
         required: [true, 'You must provide a name!'],
-        maxLength: 20
+        maxLength: 20,
+        minLength: 3
     },
     lastName: {
         type: String,
         required: [true, 'You must provide a lastname!'],
-        maxLength: 20
+        maxLength: 20,
+        minLength: 3
     },
     userName: {
         type: String,
         required: [true, 'You must provide a username!'],
         maxLength: 20,
+        minLength: 3,
         unique: true
     },
     password: {
         type: String,
-        required: [true, 'You must provide a password!']
+        required: [true, 'You must provide a password!'],
+        minLength: 3
     },
     creationDate: {
         type: Date,

@@ -177,28 +177,28 @@ router.get("/:id", function (req, res, next) {
  * @apiSuccessExample {json} Succes-Response:
  *HTTP/1.1 200 OK
  *{
-        data: [
+        "data": [
           {
-            _id: '637a61912e03c1b8f403b973',
-            name: 'nose slide',
-            video: 'video.mp4',
-            creationDate: '2022-11-19T18:31:44.268Z',
-            spotId: '637a61912e03c1b8f403b970',
-            userId: '637a61912e03c1b8f403b964'
+            "_id": '637a61912e03c1b8f403b973',
+            "name": 'nose slide',
+            "video": 'video.mp4',
+            "creationDate": '2022-11-19T18:31:44.268Z',
+            "spotId": '637a61912e03c1b8f403b970',
+            "userId": '637a61912e03c1b8f403b964'
           },
           {
-            _id: '637a61912e03c1b8f403b972',
-            name: 'board slide',
-            video: 'video.mp4',
-            creationDate: '2022-11-18T18:31:44.268Z',
-            spotId: '637a61912e03c1b8f403b970',
-            userId: '637a61912e03c1b8f403b964'
+            "_id": '637a61912e03c1b8f403b972',
+            "name": 'board slide',
+            "video": 'video.mp4',
+            "creationDate": '2022-11-18T18:31:44.268Z',
+            "spotId": '637a61912e03c1b8f403b970',
+            "userId": '637a61912e03c1b8f403b964'
           }
         ],
-        page: 1,
-        pageSize: 10,
-        total: 2
-      }
+        "page": 1,
+        "pageSize": 10,
+        "total": 2
+  }
  */
 router.get("/:id/tricks", function (req, res, next) {
   User.findOne({ _id: req.params.id }).exec(function (err, user) {
@@ -246,12 +246,30 @@ router.get("/:id/tricks", function (req, res, next) {
  * @apiName PostUser
  * @apiGroup User
  * 
- * @apiBody {Boolean} Admin is the user an admin or not 
- * @apiBody {String} firstName firstName of the user
- * @apiBody {String} lastName lastName of the user
- * @apiBody {String} userName userName of the user
+ * @apiBody {Boolean} [admin=false] Optional role of the user
+ * @apiBody {String{3..20}} firstName Mandatory firstname of the user
+ * @apiBody {String{3..20}} lastName Mandatory lastname of the user
+ * @apiBody {String{3..20}} userName Mandatory username of the user
+ * @apiBody {String{3..}} password Mandatory password of the user
+ * @apiBody {Date} [creationDate=Date.now] Optional creation date of the user
  * 
- * @apiSuccess {Object[]} NewUser creation of new user
+ * @apiSuccess (Success 201) {Boolean} admin Role of the user
+ * @apiSuccess (Success 201) {String} firstName Firstname of the user
+ * @apiSuccess (Success 201) {String} lastName Lastname of the user
+ * @apiSuccess (Success 201) {String} userName Username of the user
+ * @apiSuccess (Success 201) {String} creationDate Creation date of the user
+ * @apiSuccess (Success 201) {String} _id Id of the user 
+ * 
+ * @apiSuccessExample {json} Succes-Response:
+ *HTTP/1.1 201 OK
+ * {
+ *  "admin": false,
+ *    "firstName": "Jane",
+ *    "lastName": "Do",
+ *    "userName": "janedo",
+ *    "_id": "637a5cca9ecaf7a831f52b41",
+ *    "creationDate": "2022-11-20T16:58:50.140Z"
+ * }
  */
 router.post("/", async function (req, res, next) {
   //To hash the password
@@ -282,16 +300,39 @@ router.post("/", async function (req, res, next) {
  * @apiName DeleteUser
  * @apiGroup User
  * 
+ * @apiHeader {String} BearerToken The token of the user connected
+ * 
  * @apiParam {String} id The unique id that identifies a user 
  * 
- * @apiSuccess {Object[]} DeletedUser the deleted user 
+ * @apiSuccess {Boolean} admin Role of the user deleted
+ * @apiSuccess {String} firstName Firstname of the user deleted
+ * @apiSuccess {String} lastName Lastname of the user deleted
+ * @apiSuccess {String} userName Username of the user deleted
+ * @apiSuccess {String} creationDate Creation date of the user deleted
+ * @apiSuccess {String} _id Id of the user deleted
+ * 
+ * @apiSuccessExample {json} Succes-Response:
+ * HTTP/1.1 200 OK
+ * {
+    "_id": "637a5cbd9ecaf7a831f52b3d",
+    "admin": false,
+    "firstName": "Jon",
+    "lastName": "Do",
+    "userName": "jondo",
+    "creationDate": "2022-11-20T16:58:37.601Z"
+ }
+ * 
+ * @apiError (401 Unauthorized) NotConnected The Bearer Token is missing
+ * @apiError (401 Unauthorized) NotABearerToken Not a Bearer Token in header
+ * @apiError (401 Unauthorized) InvalidToken The token in the header is invalid or expired
+ * @apiError (403 Forbidden) NotAllowed The connected user is trying to delete another user
  */
 router.delete("/:id", authenticate, function (req, res, next) {
   User.findOne({ _id: req.params.id }).exec(function (err, user) {
     if (err) {
       return next(err)
     }
-    //If the correct user is logged in, or if he is an admin we delete it
+    //If the correct user is logged in we delete it
     if (req.params.id == req.currentUserId) {
       User.findByIdAndDelete({ _id: req.params.id }).exec(function (err, removedUser) {
         if (err) {
