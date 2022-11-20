@@ -156,7 +156,7 @@ router.post("/", authenticate, function (req, res, next) {
   //Sets the userId to the id of the connected user
   req.body.userId = req.currentUserId
   //Check if the spot exists
-  Spot.countDocuments({ _id: req.body.spotId }), function (err, count) {
+  Spot.countDocuments({ _id: req.body.spotId }).exec(function (err, count) {
     if(err){
       return next(err)
     }
@@ -180,7 +180,7 @@ router.post("/", authenticate, function (req, res, next) {
     } else {
       res.status(400).send("Spot doesn't exist")
     }
-  }
+  })
 });
 
 ////////////////////////////////////////////DELETE
