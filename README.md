@@ -23,6 +23,9 @@ Spots:
 Tricks:
   - name
   - video
+  
+### Documentation
+La documentation de l'api est disponible à https://tricks-spotter-api.onrender.com/apidoc/
 
 ### Real-Time Endpoint
 Pour se connecter au real-time endpoint (web socket), il est disponible à l'adresse suivante: ws://tricks-spotter-api.onrender.com
