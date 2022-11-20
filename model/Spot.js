@@ -7,15 +7,20 @@ let spotSchema = new Schema({
     },
     name: {
         type: String,
-        required: [true, 'You must provide a name']
+        required: [true, 'You must provide a name'],
+        maxLength: 50,
+        minLength: 3
     },
     description: {
         type: String,
-        required: [true, 'You must provide a description']
+        required: [true, 'You must provide a description'],
+        maxLength: 300,
+        minLength: 3
     },
     category: {
-        type: String,
-        required: [true, 'You must provide a category']
+        type: [String],
+        required: [true, 'You must provide a category'],
+        enum: ['ledge', 'gap', 'rail', 'flat', 'ramp', 'manual', 'drop', 'park', 'bowl']
     },
     geolocation: {
         type: [Number],
@@ -31,12 +36,10 @@ let spotSchema = new Schema({
     },
     rating: {
         type: Number,
+        max: 10,
+        min: 1
     },
     creationDate: {
-        type: Date,
-        default: Date.now
-    },
-    lastModifDate: {
         type: Date,
         default: Date.now
     }

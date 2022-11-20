@@ -179,20 +179,20 @@ router.get("/:id", function (req, res, next) {
  *{
         "data": [
           {
-            "_id": '637a61912e03c1b8f403b973',
-            "name": 'nose slide',
-            "video": 'video.mp4',
-            "creationDate": '2022-11-19T18:31:44.268Z',
-            "spotId": '637a61912e03c1b8f403b970',
-            "userId": '637a61912e03c1b8f403b964'
+            "_id": "637a61912e03c1b8f403b973",
+            "name": "nose slide",
+            "video": "video.mp4",
+            "creationDate": "2022-11-19T18:31:44.268Z",
+            "spotId": "637a61912e03c1b8f403b970",
+            "userId": "637a61912e03c1b8f403b964"
           },
           {
-            "_id": '637a61912e03c1b8f403b972',
-            "name": 'board slide',
-            "video": 'video.mp4',
-            "creationDate": '2022-11-18T18:31:44.268Z',
-            "spotId": '637a61912e03c1b8f403b970',
-            "userId": '637a61912e03c1b8f403b964'
+            "_id": "637a61912e03c1b8f403b972",
+            "name": "board slide",
+            "video": "video.mp4",
+            "creationDate": "2022-11-18T18:31:44.268Z",
+            "spotId": "637a61912e03c1b8f403b970",
+            "userId": "637a61912e03c1b8f403b964"
           }
         ],
         "page": 1,
@@ -242,7 +242,7 @@ router.get("/:id/tricks", function (req, res, next) {
 ///////////////////////////////////////////POST
 //Create new user
 /**
- * @api {post} /users to create a new user
+ * @api {post} /users Create a new user
  * @apiName PostUser
  * @apiGroup User
  * 
@@ -296,9 +296,10 @@ router.post("/", async function (req, res, next) {
 ////////////////////////////////////////////DELETE
 //Delete user by id
 /**
- * @api {delete} /users/:id to delete a user
+ * @api {delete} /users/:id Delete a user
  * @apiName DeleteUser
  * @apiGroup User
+ * @apiPermission loged in
  * 
  * @apiHeader {String} BearerToken The token of the user connected
  * 
@@ -308,7 +309,7 @@ router.post("/", async function (req, res, next) {
  * @apiSuccess {String} firstName Firstname of the user deleted
  * @apiSuccess {String} lastName Lastname of the user deleted
  * @apiSuccess {String} userName Username of the user deleted
- * @apiSuccess {String} creationDate Creation date of the user deleted
+ * @apiSuccess {Date} creationDate Creation date of the user deleted
  * @apiSuccess {String} _id Id of the user deleted
  * 
  * @apiSuccessExample {json} Succes-Response:
@@ -348,13 +349,43 @@ router.delete("/:id", authenticate, function (req, res, next) {
 
 ///////////////////////////////////////////PUT
 /**
- * @api {put} /users/:id to modify a user
+ * @api {put} /users/:id Update a user's informations
  * @apiName ModifyUser
  * @apiGroup User
+ * @apiPermission loged in
+ * 
+ * @apiHeader {String} BearerToken The token of the user connected
  * 
  * @apiParam {String} id The unique id that identifies a user 
  * 
- * @apiSuccess {Object[]} UpdatedUser Updated user
+ * @apiBody {Boolean} [admin] Optional grant role of the user (Only admins can do this)
+ * @apiBody {String{3..20}} [firstName] Optional firstname of the user
+ * @apiBody {String{3..20}} [lastName] Optional lastname of the user
+ * @apiBody {String{3..20}} [userName] Optional username of the user
+ * @apiBody {String{3..}} [password] Optional password of the user
+ * 
+ * @apiSuccess {Boolean} admin Role of the user updated
+ * @apiSuccess {String} firstName Firstname of the user updated
+ * @apiSuccess {String} lastName Lastname of the user updated
+ * @apiSuccess {String} userName Username of the user updated
+ * @apiSuccess {Date} creationDate Creation date of the user updated
+ * @apiSuccess {String} _id Id of the user updated
+ * 
+ * @apiSuccessExample {json} Succes-Response:
+ * HTTP/1.1 200 OK
+ * {
+    "_id": "637a5cbd9ecaf7a831f52b3d",
+    "admin": false,
+    "firstName": "Jon",
+    "lastName": "Do",
+    "userName": "jondo",
+    "creationDate": "2022-11-20T16:58:37.601Z"
+ }
+ * 
+ * @apiError (401 Unauthorized) NotConnected The Bearer Token is missing
+ * @apiError (401 Unauthorized) NotABearerToken Not a Bearer Token in header
+ * @apiError (401 Unauthorized) InvalidToken The token in the header is invalid or expired
+ * @apiError (403 Forbidden) NotAllowed The connected user is trying to update another user
  */
 router.put("/:id", authenticate, function (req, res, next) {
   //User can update his own profile or another if he is admin
