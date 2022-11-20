@@ -27,5 +27,16 @@ let trickSchema = new Schema({
     },
 })
 
+//Hide the _v to the api users
+trickSchema.set("toJSON", {
+    transform: transformJsonTrick
+});
+
+function transformJsonTrick(doc, json, options) {
+    // Remove the _v from the generated JSON.
+    delete json.__v;
+    return json;
+}
+
 //create model and export it
 export const Trick = model('Trick', trickSchema)

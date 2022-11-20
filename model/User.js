@@ -12,15 +12,18 @@ let userSchema = new Schema({
     },
     firstName: {
         type: String,
-        required: [true, 'You must provide a name!']
+        required: [true, 'You must provide a name!'],
+        maxLength: 20
     },
     lastName: {
         type: String,
-        required: [true, 'You must provide a lastname!']
+        required: [true, 'You must provide a lastname!'],
+        maxLength: 20
     },
     userName: {
         type: String,
         required: [true, 'You must provide a username!'],
+        maxLength: 20,
         unique: true
     },
     password: {
@@ -34,15 +37,16 @@ let userSchema = new Schema({
 })
 
 //To create custom message for unique violation
-userSchema.plugin(uniqueValidator, { message: `{PATH} is already taken` });
+userSchema.plugin(uniqueValidator, { message: `{PATH} is already taken`});
 
-//Hide the hashed password to the api users
+//Hide the hashed password and _v to the api users
 userSchema.set("toJSON", {
     transform: transformJsonUser
 });
 function transformJsonUser(doc, json, options) {
-    // Remove the hashed password from the generated JSON.
+    // Remove the hashed password and _v from the generated JSON.
     delete json.password;
+    delete json.__v;
     return json;
 }
 

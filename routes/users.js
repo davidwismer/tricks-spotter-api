@@ -175,7 +175,7 @@ router.get("/:id/tricks", function (req, res, next) {
  * 
  * @apiSuccess {Object[]} NewUser creation of new user
  */
-router.post("/", function (req, res, next) {
+router.post("/", async function (req, res, next) {
   //To hash the password
   const plainPassword = req.body.password;
   const costFactor = 10;
@@ -213,7 +213,7 @@ router.delete("/:id", authenticate, function (req, res, next) {
     if (err) {
       return next(err)
     }
-    //If the correct user is logged in we delete it
+    //If the correct user is logged in, or if he is an admin we delete it
     if (req.params.id == req.currentUserId) {
       User.findByIdAndDelete({ _id: req.params.id }).exec(function (err, removedUser) {
         if (err) {
@@ -238,7 +238,7 @@ router.delete("/:id", authenticate, function (req, res, next) {
  * @apiSuccess {Object[]} UpdatedUser Updated user
  */
 router.put("/:id", authenticate, function (req, res, next) {
-  //User can update his own profile
+  //User can update his own profile or another if he is admin
   User.findOne({ _id: req.params.id }).exec( async function (err, user) {
     if (err) {
       return next(err)
@@ -284,17 +284,6 @@ router.put("/:id", authenticate, function (req, res, next) {
         }
       })
     }
-  })
-})
-
-
-//Delete all for tests ON DOIT EFFACER CA AVANT DE RENDRE
-router.delete("/", function (req, res, next) {
-  User.deleteMany().exec(function (err, users) {
-    if (err) {
-      return next(err)
-    }
-    res.send("all deleted")
   })
 })
 
