@@ -7,11 +7,24 @@ const secretKey = process.env.SECRET_KEY
 
 //Login
 /**
- * @api {post} /login to login
+ * @api {post} /login Login to existing account
  * @apiName Login
  * @apiGroup Login
  * 
- */
+ * @apiBody (Request body) {String} userName The userName of the account you want to connect with
+ * @apiBody (Request body) {String} password The password of the account you want to connect with
+ * 
+ * @apiSuccess {Object[]} token The valid token for authentification of user
+ * 
+ * @apiSuccessExample {json} Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MzdhNDIzMDE0OTc4ODNmODM0YTVjYWEiLCJleHAiOjE2Njk1NjcyMzAsImlhdCI6MTY2ODk2MjQzMH0.PvQH17ZXt1PggE1MgNYhBKD70aJ9ienZIIZOPSN7etw"
+ *     }
+ * 
+ * @apiError (401 Unauthorized) UserNotFound The userName you provided doesn't exist
+ * @apiError (401 Unauthorized) WrongPassword The password you provided is wrong
+ */
 router.post("/", function (req, res, next) {
     User.findOne({ userName: req.body.userName }).exec(function (err, user) {
         if (err) {

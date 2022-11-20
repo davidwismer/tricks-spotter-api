@@ -175,6 +175,7 @@ describe('GET /users', function () {
         expect(res.body.data[0].name).toEqual('nose slide');
         expect(res.body.data[0].video).toEqual('video.mp4');
         expect(res.body.data[0]).toContainAllKeys(['_id', 'name', 'video', 'spotId', 'userId', 'creationDate'])
+        console.log(res.body)
     });
 });
 

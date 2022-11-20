@@ -11,8 +11,32 @@ const router = express.Router();
  * @api {get} /users Request a list of the users
  * @apiName GetUsers
  * @apiGroup User
+ * 
+ * @apiQuery {Number} pageSize The number of element to show on a page (pagination)
+ * @apiQuery {Number} page The page number that you want to show (pagination)
  *
  * @apiSuccess {Object[]} users List of users
+ * @apiSuccess {Boolean} users.admin Role of the users
+ * @apiSuccess {String} users.firstName Firstname of the users
+ * @apiSuccess {String} users.lastName Lastname of the users
+ * @apiSuccess {String} users.userName Username of the users
+ * @apiSuccess {String} users.creationDate Creation date of the users
+ * @apiSuccess {String} users._id Id of the users
+ * @apiSuccess {Number} users.tricksPosted Number of tricks the users posted
+ * 
+ * @apiSuccessExample {json} Succes-Response:
+ *HTTP/1.1 200 OK
+ *[
+    {
+        "admin": false,
+        "firstName": "Jean",
+        "lastName": "Do",
+        "userName": "jeando",
+        "creationDate": "2022-11-20T15:05:20.254Z",
+        "_id": "637a42301497883f834a5caa",
+        "tricksPosted": 0
+    }
+]
  */
 router.get("/", function (req, res, next) {
   User.find().count(function (err, total) { //To paginate the users
@@ -99,9 +123,25 @@ router.get("/", function (req, res, next) {
  * @apiName GetUser
  * @apiGroup User
  * 
- * @apiParam {String} UserId id Unique identifier of the user
+ * @apiParam {String} id The unique id that identifies a user
  * 
- * @apiSuccess {Object[]} the user with the given id
+ * @apiSuccess {Boolean} admin Role of the user
+ * @apiSuccess {String} firstName Firstname of the user
+ * @apiSuccess {String} lastName Lastname of the user
+ * @apiSuccess {String} userName Username of the user
+ * @apiSuccess {String} creationDate Creation date of the user
+ * @apiSuccess {String} _id Id of the user 
+ * 
+ * @apiSuccessExample {json} Succes-Response:
+ * HTTP/1.1 200 OK
+ * {
+    "_id": "637a5cbd9ecaf7a831f52b3d",
+    "admin": false,
+    "firstName": "Jon",
+    "lastName": "Do",
+    "userName": "jondo",
+    "creationDate": "2022-11-20T16:58:37.601Z"
+}
  */
 router.get("/:id", function (req, res, next) {
   User.findOne({ _id: req.params.id }).exec(function (err, user) {
@@ -118,9 +158,47 @@ router.get("/:id", function (req, res, next) {
  * @apiName GetUserTricks
  * @apiGroup User
  * 
- * @apiParam {String} UserId id Unique identifier of the user
+ * @apiParam {String} id The unique id that identifies a user
  * 
- * @apiSuccess {Object[]} UserTricks tricks of the user with the given id
+ * @apiQuery {Number} pageSize The number of element to show on a page (pagination)
+ * @apiQuery {Number} page The page number that you want to show (pagination)
+ * 
+ * @apiSuccess {Object[]} data The informations of the tricks
+ * @apiSuccess {String} data.name The name of the tricks
+ * @apiSuccess {String} data.video The url of the video of the tricks
+ * @apiSuccess {String} data.creationDate The creation date of the tricks
+ * @apiSuccess {String} data.userId The id of the user that posted the tricks
+ * @apiSuccess {String} data.spotId The id of the spot at which the tricks are linked
+ * @apiSuccess {String} data._id The id of the tricks
+ * @apiSuccess {Number} page The page number currently showing
+ * @apiSuccess {Number} pageSize The number of tricks showing on each page
+ * @apiSuccess {Number} total The total number of tricks posted by the user
+ * 
+ * @apiSuccessExample {json} Succes-Response:
+ *HTTP/1.1 200 OK
+ *{
+        data: [
+          {
+            _id: '637a61912e03c1b8f403b973',
+            name: 'nose slide',
+            video: 'video.mp4',
+            creationDate: '2022-11-19T18:31:44.268Z',
+            spotId: '637a61912e03c1b8f403b970',
+            userId: '637a61912e03c1b8f403b964'
+          },
+          {
+            _id: '637a61912e03c1b8f403b972',
+            name: 'board slide',
+            video: 'video.mp4',
+            creationDate: '2022-11-18T18:31:44.268Z',
+            spotId: '637a61912e03c1b8f403b970',
+            userId: '637a61912e03c1b8f403b964'
+          }
+        ],
+        page: 1,
+        pageSize: 10,
+        total: 2
+      }
  */
 router.get("/:id/tricks", function (req, res, next) {
   User.findOne({ _id: req.params.id }).exec(function (err, user) {
@@ -168,10 +246,10 @@ router.get("/:id/tricks", function (req, res, next) {
  * @apiName PostUser
  * @apiGroup User
  * 
- * @apiParam {Boolean} Admin is the user an admin or not 
- * @apiParam {String} firstName firstName of the user
- * @apiParam {String} lastName lastName of the user
- * @apiParam {String} userName userName of the user
+ * @apiBody {Boolean} Admin is the user an admin or not 
+ * @apiBody {String} firstName firstName of the user
+ * @apiBody {String} lastName lastName of the user
+ * @apiBody {String} userName userName of the user
  * 
  * @apiSuccess {Object[]} NewUser creation of new user
  */
@@ -204,7 +282,7 @@ router.post("/", async function (req, res, next) {
  * @apiName DeleteUser
  * @apiGroup User
  * 
- * @apiParam {String} UserId id Unique identifier of the user 
+ * @apiParam {String} id The unique id that identifies a user 
  * 
  * @apiSuccess {Object[]} DeletedUser the deleted user 
  */
@@ -233,13 +311,13 @@ router.delete("/:id", authenticate, function (req, res, next) {
  * @apiName ModifyUser
  * @apiGroup User
  * 
- * @apiParam {String} UserId id Unique identifier of the user 
+ * @apiParam {String} id The unique id that identifies a user 
  * 
  * @apiSuccess {Object[]} UpdatedUser Updated user
  */
 router.put("/:id", authenticate, function (req, res, next) {
   //User can update his own profile or another if he is admin
-  User.findOne({ _id: req.params.id }).exec( async function (err, user) {
+  User.findOne({ _id: req.params.id }).exec(async function (err, user) {
     if (err) {
       return next(err)
     }
