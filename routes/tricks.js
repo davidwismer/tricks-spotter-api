@@ -156,27 +156,29 @@ router.post("/", authenticate, function (req, res, next) {
   //Sets the userId to the id of the connected user
   req.body.userId = req.currentUserId
   //Check if the spot exists
-  Spot.findOne({ _id: req.body.spotId }).exec(function (err, spot) {
-    if (err) {
-      return next(err)
-    }
-    //Get the trick created
-    const newTrick = new Trick(req.body)
-    //save new trick created
-    newTrick.save(function (err, savedTrick) {
-      if (err) {
-        return next(err)
-      }
-      res.status(201).send(savedTrick)
-      //Send message to wss if trick created with the user that posted it
-      User.findOne({ _id: req.currentUserId }).exec(function (err, user) {
+  Spot.countDocuments({ _id: req.body.spotId }), function (err, count) {
+    if (count > 0) {//document exists });
+      //Get the trick created
+      const newTrick = new Trick(req.body)
+      //save new trick created
+      newTrick.save(function (err, savedTrick) {
         if (err) {
           return next(err)
         }
-        broadcastMessage({ Update: `New trick has been posted by ${user.userName}`, newTrick: savedTrick })
+        res.status(201).send(savedTrick)
+        //Send message to wss if trick created with the user that posted it
+        User.findOne({ _id: req.currentUserId }).exec(function (err, user) {
+          if (err) {
+            return next(err)
+          }
+          broadcastMessage({ Update: `New trick has been posted by ${user.userName}`, newTrick: savedTrick })
+        })
       })
-    })
-  })
+    } else {
+      res.status(400).send("Spot doesn't exist")
+    }
+
+  }
 });
 
 ////////////////////////////////////////////DELETE
