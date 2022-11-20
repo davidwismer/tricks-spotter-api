@@ -1,4 +1,5 @@
 import express from "express";
+import { Spot } from "../model/Spot.js";
 import { Trick } from "../model/Trick.js";
 import { User } from "../model/User.js"
 import authenticate from "../utils/auth.js";
@@ -154,20 +155,26 @@ router.get("/:id", function (req, res, next) {
 router.post("/", authenticate, function (req, res, next) {
   //Sets the userId to the id of the connected user
   req.body.userId = req.currentUserId
-  //Get the trick created
-  const newTrick = new Trick(req.body)
-  //save new trick created
-  newTrick.save(function (err, savedTrick) {
+  //Check if the spot exists
+  Spot.findOne({ _id: req.body.spotId }).exec(function (err, spot) {
     if (err) {
       return next(err)
     }
-    res.status(201).send(savedTrick)
-    //Send message to wss if trick created with the user that posted it
-    User.findOne({ _id: req.currentUserId }).exec(function (err, user) {
+    //Get the trick created
+    const newTrick = new Trick(req.body)
+    //save new trick created
+    newTrick.save(function (err, savedTrick) {
       if (err) {
         return next(err)
       }
-      broadcastMessage({ Update: `New trick has been posted by ${user.userName}`, newTrick: savedTrick })
+      res.status(201).send(savedTrick)
+      //Send message to wss if trick created with the user that posted it
+      User.findOne({ _id: req.currentUserId }).exec(function (err, user) {
+        if (err) {
+          return next(err)
+        }
+        broadcastMessage({ Update: `New trick has been posted by ${user.userName}`, newTrick: savedTrick })
+      })
     })
   })
 });
