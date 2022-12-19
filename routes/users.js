@@ -404,6 +404,7 @@ router.put("/:id", authenticate, function (req, res, next) {
         modif.password = hashedPassword
       }
       await User.findByIdAndUpdate({ _id: req.params.id }, {
+        picture: req.body.picture,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         userName: req.body.userName,

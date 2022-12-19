@@ -10,6 +10,9 @@ let userSchema = new Schema({
         type: Boolean,
         default: false
     },
+    picture: {
+        type: String,
+    },
     firstName: {
         type: String,
         required: [true, 'You must provide a name!'],
@@ -41,7 +44,7 @@ let userSchema = new Schema({
 })
 
 //To create custom message for unique violation
-userSchema.plugin(uniqueValidator, { message: `{PATH} is already taken`});
+userSchema.plugin(uniqueValidator, { message: `{PATH} is already taken` });
 
 //Hide the hashed password and _v to the api users
 userSchema.set("toJSON", {
