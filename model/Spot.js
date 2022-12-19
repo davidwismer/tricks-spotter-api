@@ -20,7 +20,7 @@ let spotSchema = new Schema({
     category: {
         type: [String],
         required: [true, 'You must provide a category'],
-        enum: ['ledge', 'gap', 'rail', 'flat', 'ramp', 'manual', 'drop', 'park', 'bowl']
+        enum: ['ledge', 'gap', 'rail', 'flat', 'ramp', 'manual', 'stairs', 'park', 'bowl', 'handrail']
     },
     geolocation: {
         type: [Number],

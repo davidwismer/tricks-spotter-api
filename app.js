@@ -8,12 +8,13 @@ import tricksRouter from "./routes/tricks.js";
 import loginRouter from "./routes/login.js"
 import mongoose from 'mongoose';
 import path from 'path'
+import cors from "cors"
 
 //Connection to database
 mongoose.connect(process.env.DATABASE_URL || 'mongodb://127.0.0.1:27017/tricks-spotter-api');
 
 const app = express();
-
+app.use(cors())
 // Log requests (except in test mode).
 if (process.env.NODE_ENV !== 'test') {
   app.use(logger('dev'));
