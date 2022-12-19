@@ -46,7 +46,7 @@ router.post("/", function (req, res, next) {
                 if (err) {
                     return next(err)
                 }
-                res.status(200).send({ token: token })
+                res.status(200).send({ token: token, user: user })
             })
         });
     })
