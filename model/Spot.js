@@ -14,13 +14,13 @@ let spotSchema = new Schema({
     description: {
         type: String,
         required: [true, 'You must provide a description'],
-        maxLength: 300,
+        maxLength: 350,
         minLength: 3
     },
     category: {
         type: [String],
         required: [true, 'You must provide a category'],
-        enum: ['ledge', 'gap', 'rail', 'flat', 'ramp', 'manual', 'stairs', 'park', 'bowl', 'handrail']
+        enum: ['ledge', 'gap', 'rail', 'ramp', 'manual', 'stairs', 'park', 'bowl', 'handrail']
     },
     geolocation: {
         type: [Number],
