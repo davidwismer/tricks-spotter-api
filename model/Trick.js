@@ -8,7 +8,7 @@ let trickSchema = new Schema({
     name: {
         type: String,
         required: [true, 'You must provide a name!'],
-        maxLength: 50,
+        maxLength: 30,
         minLength: 3
     },
     video: {
