@@ -407,8 +407,7 @@ router.put("/:id", authenticate, function (req, res, next) {
         picture: req.body.picture,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
-        userName: req.body.userName,
-        password: modif.password
+        userName: req.body.userName
       }, { new: true, runValidators: true }).exec(function (err, updatedUser) {
         if (err) {
           return next(err);
