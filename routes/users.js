@@ -396,18 +396,19 @@ router.put("/:id", authenticate, function (req, res, next) {
     //If the correct user is logged in he can update his profile (can't change the role)
     if (req.params.id == req.currentUserId) {
       //Hash the new password
-      /* let modif = req.body
+      let modif = req.body
       if (req.body.password !== 'undefined') {
         const plainPassword = req.body.password || '';
         const costFactor = 10;
         const hashedPassword = await bcrypt.hash(plainPassword, costFactor)
         modif.password = hashedPassword
-      } */
+      }
       await User.findByIdAndUpdate({ _id: req.params.id }, {
         picture: req.body.picture,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
-        userName: req.body.userName
+        userName: req.body.userName,
+        password: modif.password
       }, { new: true, runValidators: true }).exec(function (err, updatedUser) {
         if (err) {
           return next(err);
