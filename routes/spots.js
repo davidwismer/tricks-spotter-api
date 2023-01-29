@@ -89,7 +89,7 @@ router.get("/", function (req, res, next) {
         data: spots,
         page: page,
         pageSize: pageSize,
-        total: spots.length
+        total: total
       })
     })
   })
