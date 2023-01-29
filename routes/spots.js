@@ -60,35 +60,37 @@ const router = express.Router();
   }
  */
 router.get("/", function (req, res, next) {
-  //To filter the spots by category
-  let query = Spot.find().sort({ creationDate: -1 })
-  if (req.query.category) {
-    query = query.where('category').equals(req.query.category);
-  }
-
-  //To paginate the spots
-  const maxPage = 10 //Max elements per page
-  let page = parseInt(req.query.page, 10);
-  if (isNaN(page) || page < 1) {
-    page = 1
-  }
-
-  let pageSize = parseInt(req.query.pageSize, 10);
-  if (isNaN(pageSize) || pageSize < 0 || pageSize > maxPage) {
-    pageSize = maxPage;
-  }
-
-  query = query.skip((page - 1) * pageSize).limit(pageSize)
-
-  query.exec(function (err, spots) {
-    if (err) {
-      return next(err);
+  Spot.find().count(function (err, total) {
+    //To filter the spots by category
+    let query = Spot.find().sort({ creationDate: -1 })
+    if (req.query.category) {
+      query = query.where('category').equals(req.query.category);
     }
-    res.status(200).send({
-      data: spots,
-      page: page,
-      pageSize: pageSize,
-      total: spots.length
+
+    //To paginate the spots
+    const maxPage = 10 //Max elements per page
+    let page = parseInt(req.query.page, 10);
+    if (isNaN(page) || page < 1) {
+      page = 1
+    }
+
+    let pageSize = parseInt(req.query.pageSize, 10);
+    if (isNaN(pageSize) || pageSize < 0 || pageSize > maxPage) {
+      pageSize = maxPage;
+    }
+
+    query = query.skip((page - 1) * pageSize).limit(pageSize)
+
+    query.exec(function (err, spots) {
+      if (err) {
+        return next(err);
+      }
+      res.status(200).send({
+        data: spots,
+        page: page,
+        pageSize: pageSize,
+        total: spots.length
+      })
     })
   })
 })
